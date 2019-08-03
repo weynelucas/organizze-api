@@ -36,6 +36,7 @@ function filters(req, res, next) {
   return next();
 }
 
+// Preload transaction on routes with :id
 router.param('id', async (req, res, next) => {
   const object = await Transaction.findById(req.params.id);
 
@@ -45,7 +46,7 @@ router.param('id', async (req, res, next) => {
   return next();
 });
 
-// List
+
 router.get('/', filters, async (req, res) => {
   const transactions = await Transaction.find(req.filters);
 
@@ -54,7 +55,6 @@ router.get('/', filters, async (req, res) => {
   });
 });
 
-// Create
 router.post('/', async (req, res) => {
   const transaction = await Transaction.create(req.body);
 
@@ -62,18 +62,15 @@ router.post('/', async (req, res) => {
   return res.json(transaction);
 });
 
-// Retrieve
 router.get('/:id', async (req, res) => {
   return res.json(req.object);
 })
 
-// Update
 router.put('/:id', async (req, res) => {
   const object = await Transaction.findByIdAndUpdate(req.params.id, req.body)
   return res.json(req.object);
 })
 
-// Delete
 router.delete('/:id', async (req, res) => {
   await Transaction.findByIdAndRemove(req.params.id);
 
