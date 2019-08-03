@@ -53,7 +53,7 @@ router.param('id', async (req, res, next) => {
 router.get('/', filters, async (req, res) => {
   const transactions = await Transaction
     .find(req.filters)
-    .select('-observation -tags -__v');;
+    .select('-observation -tags -__v');
 
   return res.json({transactions});
 });
