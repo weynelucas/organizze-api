@@ -51,11 +51,11 @@ router.param('id', async (req, res, next) => {
 });
 
 router.get('/', filters, async (req, res) => {
-  const transactions = await Transaction.find(req.filters);
+  const transactions = await Transaction
+    .find(req.filters)
+    .select('-observation -tags -__v');;
 
-  return res.json({
-   transactions
-  });
+  return res.json({transactions});
 });
 
 router.post('/', async (req, res, next) => {
