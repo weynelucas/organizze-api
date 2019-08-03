@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 
+const ActivtyTypes = {
+  EARNING: 'earning',
+  EXPENSE: 'expense',
+}
+
+
 const TransactionSchema = new mongoose.Schema({
   description: {
     type: String,
@@ -9,13 +15,13 @@ const TransactionSchema = new mongoose.Schema({
   activityType: {
     type: String,
     required: true,
-    enum: ['despesa', 'receita']
+    enum: Object.values(ActivtyTypes),
   },
   date: {
     type: Date,
     required: true
   },
-  valor: {
+  ammount: {
     type: Number,
     required: true
   },
@@ -29,3 +35,5 @@ const TransactionSchema = new mongoose.Schema({
 
 
 mongoose.model('Transaction', TransactionSchema);
+
+module.exports = { ActivtyTypes };
