@@ -5,7 +5,7 @@ const Transaction = mongoose.model('Transaction');
 
 
 function filters(req, res, next) {
-  const { search, done, startDate, endDate } = req.query
+  const { search, done, activityType, startDate, endDate } = req.query
 
   const filters = {}
 
@@ -20,15 +20,19 @@ function filters(req, res, next) {
     filters.done = done === 'true';
   }
 
+  if (activityType) {
+    filters.activityType = activityType;
+  }
+
   if (startDate || endDate) {
-    filters.data = {}
+    filters.date = {}
 
     if (startDate) {
-      filters.data['$gte'] = new Date(startDate);
+      filters.date['$gte'] = new Date(startDate);
     }
 
     if (endDate) {
-      filters.data['$lte'] = new Date(endDate);
+      filters.date['$lte'] = new Date(endDate);
     }
   }
 
@@ -45,7 +49,6 @@ router.param('id', async (req, res, next) => {
   req.transaction = transaction;
   return next();
 });
-
 
 router.get('/', filters, async (req, res) => {
   const transactions = await Transaction.find(req.filters);
