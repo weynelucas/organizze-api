@@ -38,11 +38,11 @@ function filters(req, res, next) {
 
 // Preload transaction on routes with :id
 router.param('id', async (req, res, next) => {
-  const object = await Transaction.findById(req.params.id);
+  const transaction = await Transaction.findById(req.params.id);
 
-  if (!object) res.sendStatus(404);
+  if (!transaction) res.sendStatus(404);
 
-  req.object = object;
+  req.transaction = transaction;
   return next();
 });
 
@@ -55,20 +55,22 @@ router.get('/', filters, async (req, res) => {
   });
 });
 
-router.post('/', async (req, res) => {
-  const transaction = await Transaction.create(req.body);
+router.post('/', async (req, res, next) => {
+  const transaction = new Transaction(req.body);
 
-  res.status(201);
-  return res.json(transaction);
+  transaction.save().then((doc) => {
+    return res.status(201).json(doc)
+  }).catch(next);
 });
 
 router.get('/:id', async (req, res) => {
-  return res.json(req.object);
+  return res.json(req.transaction);
 })
 
-router.put('/:id', async (req, res) => {
-  const object = await Transaction.findByIdAndUpdate(req.params.id, req.body)
-  return res.json(req.object);
+router.put('/:id', async (req, res, next) => {
+  req.transaction.update(req.body).then((doc) => {
+    return res.status(200).json(doc);
+  }).catch(next);
 })
 
 router.delete('/:id', async (req, res) => {

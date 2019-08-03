@@ -11,6 +11,7 @@ const TransactionSchema = new mongoose.Schema({
   description: {
     type: String,
     text: true,
+    required: true,
   },
   activityType: {
     type: String,
