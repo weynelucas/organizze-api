@@ -6,7 +6,8 @@ const cors = require('cors');
 
 
 // Dependencies (local)
-const logging = require('./src/middlewares/logging');
+const settings = require('./src/config');
+const logger = require('./src/middlewares/logger');
 
 
 // Global app object
@@ -24,7 +25,7 @@ requireDir('./src/models');
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(logging());
+app.use(logger());
 
 
 // Routes
@@ -32,6 +33,6 @@ app.use('/', require('./src/routes'));
 
 
 // Starting server
-const server = app.listen(process.env.PORT || 3100, () => {
+const server = app.listen(settings.port, () => {
   console.log(`Listening on port ${server.address().port}`)
 })

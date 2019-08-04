@@ -1,10 +1,9 @@
 const moment = require('moment');
 
 
-function logging() {
+function logger() {
   return (req, res, next) => {
     res.on('finish', () => {
-      // Make the request log message
       const message = [
         `[${moment().format('DD/MMM/YYYY hh:mm:ss')}]`,
         `"${req.method} ${req.originalUrl} HTTP/${req.httpVersion}"`,
@@ -17,4 +16,4 @@ function logging() {
   }
 }
 
-module.exports = logging;
+module.exports = logger;
