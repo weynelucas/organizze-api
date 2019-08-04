@@ -7,7 +7,7 @@ const cors = require('cors');
 
 // Dependencies (local)
 const settings = require('./src/config');
-const logging = require('./src/middlewares/logging');
+const logger = require('./src/middlewares/logger');
 
 
 // Global app object
@@ -25,7 +25,7 @@ requireDir('./src/models');
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(logging());
+app.use(logger());
 
 
 // Routes

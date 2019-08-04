@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const auth = require('./auth');
-const { APIError, NotAuthenticatedError } = require('../errors/api');
+const { APIError } = require('../errors/api');
 
 
 router.use('/', require('./users'));

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const moongose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const auth = require('./auth');
 const User = moongose.model('User');
 const { AuthenticationFailedError } = require('../errors/api');
 
@@ -42,6 +43,10 @@ router.post('/signup', (req, res, next) => {
     res.status(201)
     return res.json(doc.toRepresentation());
   }).catch(next);
+});
+
+router.get('/user', auth.required, (req, res, next) => {
+  return res.json(req.user.toRepresentation());
 });
 
 
