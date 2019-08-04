@@ -24,6 +24,8 @@ router.use((err, req, res, next) => {
       .status(err.statusCode)
       .json({ message: err.message });
   }
+
+  return next(err);
 });
 
 
