@@ -47,6 +47,17 @@ class AuthenticationFailedError extends APIError {
 }
 
 
+class NotAuthenticatedError extends APIError {
+  constructor(message) {
+    super(message);
+
+    this.code = 'not_authenticated';
+    this.message = message || 'Authentication credentials were not provided.';
+    this.statusCode = Status.HTTP_401_UNAUTHORIZED;
+  }
+}
+
+
 class PermissionDeniedError extends APIError {
   constructor(message) {
     super(message);
@@ -62,5 +73,6 @@ module.exports = {
   APIError, 
   NotFoundError, 
   AuthenticationFailedError, 
+  NotAuthenticatedError,
   PermissionDeniedError 
 }
