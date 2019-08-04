@@ -68,7 +68,7 @@ router.get('/', filters, async (req, res) => {
 });
 
 // Create transaction
-router.post('/', async (req, res, next) => {
+router.post('/', (req, res, next) => {
   const transaction = new Transaction(req.body);
   transaction.user = req.user
 
@@ -78,12 +78,12 @@ router.post('/', async (req, res, next) => {
 });
 
 // Retrieve transaction
-router.get('/:id', async (req, res) => {
+router.get('/:id', (req, res) => {
   return res.json(req.transaction);
 })
 
 // Update transaction
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', (req, res, next) => {
   const transaction = Object.assign(req.transaction, req.body);
   transaction.user = req.user
 
