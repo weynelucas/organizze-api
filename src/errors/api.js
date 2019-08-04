@@ -12,15 +12,15 @@ class APIError extends Error {
   constructor(message) {
     super(message);
 
+    // Ensure the name of this error is the same as the class name
     this.name = this.constructor.name;
+
+    // API error properties
+    this.code = 'error';
+    this.message = message || 'A server error occurred.';
     this.statusCode = Status.HTTP_500_INTERNAL_SERVER_ERROR;
-    this.message = this.message || this.constructor.defaultMessage;
 
     Error.captureStackTrace(this, this.constructor);
-  }
-
-  static get defaultMessage() {
-    return 'A server error occurred.';
   }
 } 
 
@@ -29,11 +29,9 @@ class NotFoundError extends APIError {
   constructor(message) {
     super(message);
 
+    this.code = 'not_found';
+    this.message = message || 'Not found.';
     this.statusCode = Status.HTTP_404_NOT_FOUND;
-  }
-
-  static get defaultMessage() {
-    return 'Not found.';
   }
 }
 
@@ -42,11 +40,9 @@ class AuthenticationFailedError extends APIError {
   constructor(message) {
     super(message);
 
-    this.statusCode = HTTP_401_UNAUTHORIZED;
-  }
-
-  static get defaultMessage() {
-    return 'Incorrect authentication credentials.';
+    this.code = 'authentication_failed';
+    this.message = message || 'Incorrect authentication credentials.';
+    this.statusCode = Status.HTTP_401_UNAUTHORIZED;
   }
   
 }
@@ -56,11 +52,9 @@ class PermissionDeniedError extends APIError {
   constructor(message) {
     super(message);
 
+    this.code = 'permission_denied';
+    this.message = message || 'You do not have permission to perform this action.';
     this.statusCode = Status.HTTP_403_FORBIDDEN;
-  }
-
-  static get defaultMessage() {
-    return 'You do not have permission to perform this action.';
   }
 }
 

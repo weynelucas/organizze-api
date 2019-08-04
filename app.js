@@ -1,17 +1,14 @@
-// Dependencies
+// Dependencies (3rd-party)
 const express = require('express');
 const mongoose = require('mongoose');
 const requireDir = require('require-dir');
 const cors = require('cors');
 
+// Dependencies (local)
+const logging = require('./src/middlewares/logging');
 
 // Global app object
 const app = express();
-
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
 
 
 // Database config
@@ -21,6 +18,11 @@ mongoose.connect(
 );
 requireDir('./src/models');
 
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(logging());
 
 // Routes
 app.use('/', require('./src/routes'));
