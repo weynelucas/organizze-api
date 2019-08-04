@@ -40,6 +40,14 @@ UserSchema.pre('save', function(next) {
   })
 });
 
+UserSchema.methods.toRepresentation = function () {
+  return {
+    name: this.name,
+    email: this.email,
+    isActive: this.isActive,
+    lastLogin: this.lastLogin,
+  }
+}
 
 
 mongose.model('User', UserSchema);
