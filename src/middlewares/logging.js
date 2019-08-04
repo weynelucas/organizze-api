@@ -1,9 +1,12 @@
+const moment = require('moment');
+
+
 function logging() {
   return (req, res, next) => {
     res.on('finish', () => {
       // Make the request log message
       const message = [
-        `[${new Date()}]`,
+        `[${moment().format('DD/MMM/YYYY hh:mm:ss')}]`,
         `"${req.method} ${req.originalUrl} HTTP/${req.httpVersion}"`,
         `${res.statusCode} ${res.statusMessage}`
       ].join(' ')
