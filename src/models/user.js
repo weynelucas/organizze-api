@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const mongose = require('mongoose');
 const unique = require('mongoose-unique-validator');
 
+const settings = require('../config');
+
 
 const UserSchema = new mongose.Schema({
   name: String,
@@ -28,7 +30,7 @@ UserSchema.plugin(unique);
 UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
 
-  bcrypt.genSalt(process.env.SALT_ROUNDS || 10, (err, salt) => {
+  bcrypt.genSalt(settings.rounds || 10, (err, salt) => {
     if (err) next(err);
 
     bcrypt.hash(this.password, salt, (err, hash) => {
