@@ -44,7 +44,6 @@ class AuthenticationFailedError extends APIError {
     this.message = message || 'Incorrect authentication credentials.';
     this.statusCode = Status.HTTP_401_UNAUTHORIZED;
   }
-  
 }
 
 
