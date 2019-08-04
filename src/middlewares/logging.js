@@ -1,7 +1,14 @@
 function logging() {
   return (req, res, next) => {
     res.on('finish', () => {
-      console.log(`[${new Date()}] "${req.method} ${req.url} HTTP/${req.httpVersion}" ${res.statusCode} ${res.statusMessage}`);
+      // Make the request log message
+      const message = [
+        `[${new Date()}]`,
+        `"${req.method} ${req.originalUrl} HTTP/${req.httpVersion}"`,
+        `${res.statusCode} ${res.statusMessage}`
+      ].join(' ')
+      
+      console.log(message);
     });
     return next();
   }
