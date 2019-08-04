@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { APIError } = require('../errors/api');
 
 
+router.use('/', require('./users'));
 router.use('/transactions', require('./transactions'));
 
 

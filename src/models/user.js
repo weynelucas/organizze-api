@@ -1,5 +1,6 @@
-const mongose = require('mongoose');
 const bcrypt = require('bcrypt');
+const mongose = require('mongoose');
+const unique = require('mongoose-unique-validator');
 
 
 const UserSchema = new mongose.Schema({
@@ -22,8 +23,9 @@ const UserSchema = new mongose.Schema({
   lastLogin: Date,
 });
 
+UserSchema.plugin(unique);
 
-UserSchema.pre('save', (next) => {
+UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
 
   bcrypt.genSalt(process.env.SALT_ROUNDS || 10, (err, salt) => {
@@ -37,6 +39,7 @@ UserSchema.pre('save', (next) => {
     })
   })
 });
+
 
 
 mongose.model('User', UserSchema);
