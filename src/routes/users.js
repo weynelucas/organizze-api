@@ -22,11 +22,14 @@ router.post('/login', (req, res, next) => {
   }
 
   User.findOne({ email: req.body.email }).then((user) => {
-    bcrypt.compare(req.body.password, user.password, (err, same) => {
+    bcrypt.compare(req.body.password, user.password, async (err, same) => {
       if (err) return next(err);
 
       if (!same) return next(new AuthenticationFailedError());
 
+      // Update last login
+      user.lastLogin = new Date();
+      user =  await user.save();
       return res.json(user.toRepresentation());
     })
   }).catch(next);
