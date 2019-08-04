@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
+const { NotFoundError } = require('../errors/api');
 
 const Transaction = mongoose.model('Transaction');
 
@@ -41,13 +42,15 @@ function filters(req, res, next) {
 }
 
 // Preload transaction on routes with :id
-router.param('id', async (req, res, next) => {
-  const transaction = await Transaction.findById(req.params.id);
+router.param('id', (req, res, next) => {
+  Transaction.findById(req.params.id, (err, doc) => {
+    if (err) {
+      return next(new NotFoundError());
+    }
 
-  if (!transaction) res.sendStatus(404);
-
-  req.transaction = transaction;
-  return next();
+    req.transaction = doc;
+    return next();
+  });
 });
 
 router.get('/', filters, async (req, res) => {

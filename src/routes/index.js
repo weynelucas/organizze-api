@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { APIError } = require('../errors/api');
 
 
 router.use('/transactions', require('./transactions'));
@@ -14,6 +15,15 @@ router.use((err, req, res, next) => {
   }
 
   return next(err);
+});
+
+
+router.use((err, req, res, next) => {
+  if (err instanceof APIError) {
+    return res
+      .status(err.statusCode)
+      .json({ message: err.message });
+  }
 });
 
 
