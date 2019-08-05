@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const unique = require('mongoose-unique-validator');
 
 
 const TagSchema = new mongoose.Schema({
@@ -18,7 +19,12 @@ const TagSchema = new mongoose.Schema({
   }
 });
 
-TagSchema.index({ description: 1, user: 1 }, { unique: true })
+TagSchema.index(
+  { description: 1, user: 1 }, 
+  { unique: true }
+);
+
+TagSchema.plugin(unique);
 
 
-mongoose.model('Tag', TagSchema)
+mongoose.model('Tag', TagSchema);
