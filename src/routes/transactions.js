@@ -84,8 +84,8 @@ router.get('/:id', (req, res) => {
 
 // Update transaction
 router.put('/:id', (req, res, next) => {
-  const transaction = Object.assign(req.transaction, req.body);
-  transaction.user = req.user
+  const { __v, _id, user, createdAt, ...rest } = req.body;
+  const transaction = req.transaction.set(rest);
 
   transaction.save().then((doc) => {
     return res.status(200).json(doc);
