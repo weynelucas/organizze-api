@@ -6,7 +6,7 @@ const Transaction = mongoose.model('Transaction');
 
 const payload = ({ __v, _id, user, createdAt, ...rest }) => rest;
 
-function filters(req, res, next) {
+const filters = (req) => {
   const { search, done, activityType, startDate, endDate } = req.query
 
   const filters = { user: req.user.id }
@@ -38,8 +38,7 @@ function filters(req, res, next) {
     }
   }
 
-  req.filters = filters;
-  return next();
+  return filters;
 }
 
 // Preload transaction on routes with :id
@@ -56,9 +55,9 @@ router.param('id', async (req, res, next) => {
 });
 
 // List transactions
-router.get('/', filters, async (req, res) => {
+router.get('/', async (req, res) => {
   const transactions = await Transaction
-    .find(req.filters)
+    .find(filters(req))
     .select([
       '-user', 
       '-observation', 
