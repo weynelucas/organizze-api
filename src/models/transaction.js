@@ -11,6 +11,7 @@ const TransactionSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
   description: {
     type: String,
@@ -44,5 +45,3 @@ const TransactionSchema = new mongoose.Schema({
 
 
 mongoose.model('Transaction', TransactionSchema);
-
-module.exports = { ActivtyTypes };
