@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { NotFoundError } = require('../errors/api');
 const Transaction = mongoose.model('Transaction');
 
+const payload = ({ __v, _id, user, createdAt, ...rest }) => rest;
 
 function filters(req, res, next) {
   const { search, done, activityType, startDate, endDate } = req.query
@@ -69,7 +70,7 @@ router.get('/', filters, async (req, res) => {
 
 // Create transaction
 router.post('/', (req, res, next) => {
-  const transaction = new Transaction(req.body);
+  const transaction = new Transaction(payload(req.body));
   transaction.user = req.user
 
   transaction.save().then((doc) => {
@@ -84,8 +85,7 @@ router.get('/:id', (req, res) => {
 
 // Update transaction
 router.put('/:id', (req, res, next) => {
-  const { __v, _id, user, createdAt, ...rest } = req.body;
-  const transaction = req.transaction.set(rest);
+  const transaction = req.transaction.set(payload(req.body));
 
   transaction.save().then((doc) => {
     return res.status(200).json(doc);
