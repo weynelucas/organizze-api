@@ -7,15 +7,15 @@ const Transaction = mongoose.model('Transaction');
 const payload = ({ __v, _id, user, createdAt, ...rest }) => rest;
 
 const filters = (req) => {
-  const { search, done, activityType, startDate, endDate } = req.query
+  const { search, done, activityType, startDate, endDate } = req.query;
 
-  const filters = { user: req.user.id }
+  const filters = { user: req.user.id };
 
   if (search) {
     filters['$text'] = { 
       $search: search,
       $caseSensitive: false,
-    }
+    };
   }
 
   if (['true', 'false'].includes(done)) {
@@ -27,7 +27,7 @@ const filters = (req) => {
   }
 
   if (startDate || endDate) {
-    filters.date = {}
+    filters.date = {};
 
     if (startDate) {
       filters.date['$gte'] = new Date(startDate);
@@ -39,7 +39,7 @@ const filters = (req) => {
   }
 
   return filters;
-}
+};
 
 
 // Preload transaction on routes with :id
@@ -52,7 +52,7 @@ router.param('id', async (req, res, next) => {
   if (!transaction) return next(new NotFoundError());
 
   req.transaction = transaction;
-  return next()
+  return next();
 });
 
 
@@ -73,10 +73,10 @@ router.get('/', async (req, res) => {
 // Create transaction
 router.post('/', (req, res, next) => {
   const transaction = new Transaction(payload(req.body));
-  transaction.user = req.user
+  transaction.user = req.user;
 
   transaction.save().then((doc) => {
-    return res.status(201).json(doc)
+    return res.status(201).json(doc);
   }).catch(next);
 });
 
@@ -84,7 +84,7 @@ router.post('/', (req, res, next) => {
 // Retrieve transaction
 router.get('/:id', (req, res) => {
   return res.json(req.transaction);
-})
+});
 
 
 // Update transaction
@@ -94,7 +94,7 @@ router.put('/:id', (req, res, next) => {
   transaction.save().then((doc) => {
     return res.status(200).json(doc);
   }).catch(next);
-})
+});
 
 
 // Delete transaction
@@ -102,7 +102,7 @@ router.delete('/:id', async (req, res) => {
   await req.transaction.remove();
 
   return res.status(204).json();
-})
+});
 
 
-module.exports = router
+module.exports = router;

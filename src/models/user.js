@@ -39,8 +39,8 @@ UserSchema.pre('save', function(next) {
 
       this.password = hash;
       next();
-    })
-  })
+    });
+  });
 });
 
 UserSchema.methods.jwt = function() {
@@ -48,8 +48,8 @@ UserSchema.methods.jwt = function() {
     id: this._id,
     email: this.email,
     exp: Math.floor((Date.now()/1000) + (60*60))
-  }, settings.secret)
-}
+  }, settings.secret);
+};
 
 UserSchema.methods.toRepresentation = function () {
   return {
@@ -58,8 +58,8 @@ UserSchema.methods.toRepresentation = function () {
     isActive: this.isActive,
     lastLogin: this.lastLogin,
     token: this.jwt()
-  }
-}
+  };
+};
 
 
 mongose.model('User', UserSchema);

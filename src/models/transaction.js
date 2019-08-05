@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const ActivtyTypes = {
   EARNING: 'earning',
   EXPENSE: 'expense',
-}
+};
 
 
 const TransactionSchema = new mongoose.Schema({

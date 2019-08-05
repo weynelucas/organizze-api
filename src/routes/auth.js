@@ -13,14 +13,14 @@ function getuser() {
       const user = await User.findById(req.payload.id);
 
       if (!user) {
-        return next(new AuthenticationFailedError('User not found.'))
+        return next(new AuthenticationFailedError('User not found.'));
       }
 
       req.user = user;
     }
 
     return next();
-  }
+  };
 }
 
 
@@ -53,4 +53,4 @@ module.exports = {
       getToken: getTokenFromHeaderOrQuery,
     }), getuser()
   ]
-}
+};

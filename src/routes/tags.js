@@ -6,17 +6,17 @@ const { NotFoundError } = require('../errors/api');
 
 const payload = ({ description }) => description ? { description } : {};
 const filters = ({ query: { search }, user: { id: userId } }) => {
-  const filters = { user: userId }
+  const filters = { user: userId };
 
   if (search) {
     filters['$text'] = { 
       $search: search,
       $caseSensitive: false,
-    }
+    };
   }
 
   return filters;
-}
+};
 
 // Preload tag on routes with :id
 router.param('id', async (req, res, next) => {
@@ -49,14 +49,14 @@ router.post('/', (req, res, next) => {
 
   tag.save().then((doc) => {
     return res.status(201).json(tag);
-  }).catch(next)
+  }).catch(next);
 });
 
 
 // Retrieve tag
 router.get('/:id', (req, res) => {
   return res.json(req.tag);
-})
+});
 
 
 // Update tag
@@ -65,7 +65,7 @@ router.put('/:id', (req, res, next) => {
 
   tag.save().then((doc) => {
     return res.json(doc);
-  }).catch(next)
+  }).catch(next);
 });
 
 
@@ -77,4 +77,4 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-module.exports = router
+module.exports = router;

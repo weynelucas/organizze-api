@@ -14,7 +14,7 @@ router.use('/tags', require('./tags'));
 // Handle express-jwt error
 router.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({ message: err.message })
+    return res.status(401).json({ message: err.message });
   }
 
   return next(err);

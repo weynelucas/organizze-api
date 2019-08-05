@@ -36,7 +36,7 @@ router.post('/login', (req, res, next) => {
       user.lastLogin = new Date();
       user =  await user.save();
       return res.json(user.toRepresentation());
-    })
+    });
   });
 });
 
@@ -45,7 +45,7 @@ router.post('/signup', (req, res, next) => {
   const user = new User(req.body);
 
   user.save().then((doc) => {
-    res.status(201)
+    res.status(201);
     return res.json(doc.toRepresentation());
   }).catch(next);
 });
