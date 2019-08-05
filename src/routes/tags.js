@@ -5,7 +5,18 @@ const Tag = mongoose.model('Tag');
 const { NotFoundError } = require('../errors/api');
 
 const payload = ({ description }) => description ? { description } : {};
+const filters = ({ query: { search }, user: { id: userId } }) => {
+  const filters = { user: userId }
 
+  if (search) {
+    filters['$text'] = { 
+      $search: search,
+      $caseSensitive: false,
+    }
+  }
+
+  return filters;
+}
 
 // Preload tag on routes with :id
 router.param('id', async (req, res, next) => {
@@ -23,7 +34,9 @@ router.param('id', async (req, res, next) => {
 
 // List tags
 router.get('/', async (req, res) => {
-  const tags = await Tag.find().select('-user -__v');
+  const tags = await Tag
+    .find(filters(req))
+    .select('-user -__v');
 
   return res.json({ results: tags });
 });
