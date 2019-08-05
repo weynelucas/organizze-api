@@ -22,7 +22,11 @@ router.post('/login', (req, res, next) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ email: req.body.email }).then((user) => {
+  User.findOne({ email: req.body.email }, (err, user) => {
+    if (!user) {
+      return next(new AuthenticationFailedError());
+    }
+
     bcrypt.compare(req.body.password, user.password, async (err, same) => {
       if (err) return next(err);
 
@@ -33,7 +37,7 @@ router.post('/login', (req, res, next) => {
       user =  await user.save();
       return res.json(user.toRepresentation());
     })
-  }).catch(next);
+  });
 });
 
 router.post('/signup', (req, res, next) => {
