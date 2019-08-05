@@ -8,14 +8,14 @@ const { AuthenticationFailedError } = require('../errors/api');
 
 
 router.post('/login', (req, res, next) => {
-  errors = {}
+  const errors = {};
   
   if (!req.body.email) {
-    errors['email'] = 'Path `email` is required.'
+    errors['email'] = 'Path `email` is required.';
   }
 
   if (!req.body.password) {
-    errors['passwod'] = 'Path `password` is required.'
+    errors['passwod'] = 'Path `password` is required.';
   }
 
   if (Object.entries(errors).length !== 0) {
@@ -40,6 +40,7 @@ router.post('/login', (req, res, next) => {
   });
 });
 
+
 router.post('/signup', (req, res, next) => {
   const user = new User(req.body);
 
@@ -48,6 +49,7 @@ router.post('/signup', (req, res, next) => {
     return res.json(doc.toRepresentation());
   }).catch(next);
 });
+
 
 router.get('/user', auth.required, (req, res, next) => {
   return res.json(req.user.toRepresentation());
