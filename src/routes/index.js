@@ -7,6 +7,8 @@ const { APIError } = require('../errors/api');
 router.use('/', require('./users'));
 router.use('/transactions', auth.required);
 router.use('/transactions', require('./transactions'));
+router.use('/tags', auth.required);
+router.use('/tags', require('./tags'));
 
 
 // Handle express-jwt error

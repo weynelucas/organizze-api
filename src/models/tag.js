@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const TagSchema = new mongoose.Schema({
   description: {
     type: String,
-    required: true
+    text: true,
+    required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

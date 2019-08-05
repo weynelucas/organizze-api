@@ -41,6 +41,7 @@ const filters = (req) => {
   return filters;
 }
 
+
 // Preload transaction on routes with :id
 router.param('id', async (req, res, next) => {
   const transaction = await Transaction.findOne({ 
@@ -53,6 +54,7 @@ router.param('id', async (req, res, next) => {
   req.transaction = transaction;
   return next()
 });
+
 
 // List transactions
 router.get('/', async (req, res) => {
@@ -67,6 +69,7 @@ router.get('/', async (req, res) => {
   return res.json({ transactions });
 });
 
+
 // Create transaction
 router.post('/', (req, res, next) => {
   const transaction = new Transaction(payload(req.body));
@@ -77,10 +80,12 @@ router.post('/', (req, res, next) => {
   }).catch(next);
 });
 
+
 // Retrieve transaction
 router.get('/:id', (req, res) => {
   return res.json(req.transaction);
 })
+
 
 // Update transaction
 router.put('/:id', (req, res, next) => {
@@ -91,12 +96,12 @@ router.put('/:id', (req, res, next) => {
   }).catch(next);
 })
 
+
 // Delete transaction
 router.delete('/:id', async (req, res) => {
   await req.transaction.remove();
 
-  res.status(204);
-  return res.json();
+  return res.status(204).json();
 })
 
 

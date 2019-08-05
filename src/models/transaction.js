@@ -40,7 +40,7 @@ const TransactionSchema = new mongoose.Schema({
     default: Date.now
   },
   observation: String,
-  tags: [String]
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]
 });
 
 
