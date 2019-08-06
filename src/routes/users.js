@@ -4,13 +4,13 @@ const { model } = require('mongoose');
 const User = model('User');
 const { required } = require('./auth');
 const validate = require('../middlewares/validate');
-const authService = require('../services/auth');
+const auth = require('../services/auth');
 const { AuthenticationFailedError } = require('../errors/api');
 const validators = require('../validators/users');
 
 
 router.post('/login', validate(validators.login), async (req, res, next) => {
-  const user = await authService.authenticate(req.body);
+  const user = await auth.authenticate(req.body);
   
   if (!user) {
     return next(new AuthenticationFailedError());
