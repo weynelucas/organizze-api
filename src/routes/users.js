@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { model } = require('mongoose');
-const { checkSchema } = require('express-validator');
 
 const User = model('User');
 const { required } = require('./auth');
