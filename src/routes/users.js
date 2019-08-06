@@ -1,25 +1,39 @@
 const router = require('express').Router();
+const { model } = require('mongoose');
+const { checkSchema } = require('express-validator');
+
+const User = model('User');
 const { required } = require('./auth');
+const validate = require('../middlewares/validate');
 const authService = require('../services/auth');
-const User = require('mongoose').model('User');
 const { AuthenticationFailedError } = require('../errors/api');
 
-
-router.post('/login', async (req, res, next) => {
-  const errors = {};
-  
-  if (!req.body.email) {
-    errors['email'] = 'Path `email` is required.';
+const validator = checkSchema({
+  email: {
+    in: ['body'],
+    isEmpty: { 
+      negated: true,
+      errorMessage: 'Email is required.'
+    },
+    isEmail: {
+      errorMessage: 'Enter a valid email address.'
+    },
+  },
+  password: {
+    in: ['body'],
+    isEmpty: { 
+      negated: true,
+      errorMessage: 'Password is required.'
+    },
+    isLength: { 
+      options: { min: 7 },
+      errorMessage: 'Password should be at least 7 chars long',
+    },
   }
+});
 
-  if (!req.body.password) {
-    errors['passwod'] = 'Path `password` is required.';
-  }
 
-  if (Object.entries(errors).length !== 0) {
-    return res.status(400).json(errors);
-  }
-
+router.post('/login', validate(validator), async (req, res, next) => {
   const user = await authService.authenticate(req.body);
   
   if (!user) {
