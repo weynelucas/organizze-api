@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { Schema, model }= require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
@@ -44,21 +43,12 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-UserSchema.methods.jwt = function() {
-  return jwt.sign({
-    id: this._id,
-    email: this.email,
-    exp: Math.floor((Date.now()/1000) + (60*60))
-  }, settings.secret);
-};
-
 UserSchema.methods.toRepresentation = function () {
   return {
     name: this.name,
     email: this.email,
     isActive: this.isActive,
     lastLogin: this.lastLogin,
-    token: this.jwt()
   };
 };
 

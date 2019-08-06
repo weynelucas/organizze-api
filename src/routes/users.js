@@ -10,13 +10,13 @@ const validators = require('../validators/users');
 
 
 router.post('/login', validate(validators.login), async (req, res, next) => {
-  const user = await auth.authenticate(req.body);
+  const { user, token } = await auth.authenticate(req.body);
   
   if (!user) {
     return next(new AuthenticationFailedError());
   }
 
-  return res.status(200).json(user.toRepresentation());
+  return res.status(200).json({ token, user });
 });
 
 
