@@ -1,22 +1,19 @@
-const mongoose = require('mongoose');
-const unique = require('mongoose-unique-validator');
+const { Schema, model } = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
-
-const TagSchema = new mongoose.Schema({
+const TagSchema = new Schema({
   description: {
     type: String,
     text: true,
     required: true,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true
 });
 
 TagSchema.index(
@@ -24,7 +21,6 @@ TagSchema.index(
   { unique: true }
 );
 
-TagSchema.plugin(unique);
+TagSchema.plugin(uniqueValidator);
 
-
-mongoose.model('Tag', TagSchema);
+module.exports = model('Tag', TagSchema);

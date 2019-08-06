@@ -1,12 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongose = require('mongoose');
-const unique = require('mongoose-unique-validator');
+const { Schema, model }= require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const settings = require('../config');
 
-
-const UserSchema = new mongose.Schema({
+const UserSchema = new Schema({
   name: String,
   email: {
     type: String,
@@ -24,9 +23,11 @@ const UserSchema = new mongose.Schema({
     default: true,
   },
   lastLogin: Date,
+}, {
+  timestamps: true
 });
 
-UserSchema.plugin(unique);
+UserSchema.plugin(uniqueValidator);
 
 UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
@@ -61,5 +62,4 @@ UserSchema.methods.toRepresentation = function () {
   };
 };
 
-
-mongose.model('User', UserSchema);
+model('User', UserSchema);

@@ -1,15 +1,13 @@
-const mongoose = require('mongoose');
-
+const { Schema, model } = require('mongoose');
 
 const ActivtyTypes = {
   EARNING: 'earning',
   EXPENSE: 'expense',
 };
 
-
-const TransactionSchema = new mongoose.Schema({
+const TransactionSchema = new Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
@@ -35,13 +33,10 @@ const TransactionSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
   observation: String,
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]
+  tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }]
+}, {
+  timestamps: true
 });
 
-
-mongoose.model('Transaction', TransactionSchema);
+module.exports = model('Transaction', TransactionSchema);
