@@ -1,13 +1,11 @@
 const router = require('express').Router();
-const moongose = require('mongoose');
-const bcrypt = require('bcrypt');
-
-const auth = require('./auth');
-const User = moongose.model('User');
+const { required } = require('./auth');
+const authService = require('../services/auth');
+const User = require('mongoose').model('User');
 const { AuthenticationFailedError } = require('../errors/api');
 
 
-router.post('/login', (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   const errors = {};
   
   if (!req.body.email) {
@@ -22,22 +20,13 @@ router.post('/login', (req, res, next) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ email: req.body.email }, (err, user) => {
-    if (!user) {
-      return next(new AuthenticationFailedError());
-    }
+  const user = await authService.authenticate(req.body);
+  
+  if (!user) {
+    return next(new AuthenticationFailedError());
+  }
 
-    bcrypt.compare(req.body.password, user.password, async (err, same) => {
-      if (err) return next(err);
-
-      if (!same) return next(new AuthenticationFailedError());
-
-      // Update last login
-      user.lastLogin = new Date();
-      user =  await user.save();
-      return res.json(user.toRepresentation());
-    });
-  });
+  return res.status(200).json(user.toRepresentation());
 });
 
 
@@ -51,7 +40,7 @@ router.post('/signup', (req, res, next) => {
 });
 
 
-router.get('/user', auth.required, (req, res, next) => {
+router.get('/user', required, (req, res, next) => {
   return res.json(req.user.toRepresentation());
 });
 

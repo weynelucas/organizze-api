@@ -33,7 +33,7 @@ app.use('/', require('./routes'));
 
 
 // Starting server
-const server = app.listen(settings.port, () => {
+const server = app.listen(8000, () => {
   // eslint-disable-next-line no-console
   console.log(`Listening on port ${server.address().port}`);
 });
