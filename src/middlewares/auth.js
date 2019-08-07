@@ -6,7 +6,7 @@ const settings = require('../config');
 const { AuthenticationFailedError } = require('../errors/api');
 
 
-function getUserFromPayload({ requestProperty='user', raiseException=true }) {
+function getUserFromPayload(requestProperty='user', raiseException=true) {
   return async (req, res, next) => {
     if (req.payload !== undefined) {
       User.findById(req.payload.id).then(user => {
@@ -34,16 +34,14 @@ function getTokenFromHeaderOrQuery(req) {
 }
 
 module.exports = {
-  isAuthenticated({ 
-    secret=settings.secret,
-    requestProperty='payload',
-    getToken=getTokenFromHeaderOrQuery,
-    reloadUser=true,
-    ...rest
-  }) {
+  isAuthenticated(reloadUser=true) {
     const stack = [];
 
-    stack.push(jwt({ secret, requestProperty, getToken, ...rest }));
+    stack.push(jwt({
+      secret: settings.secret,
+      requestProperty: 'payload',
+      getToken: getTokenFromHeaderOrQuery
+    }));
 
     if (reloadUser) {
       stack.push(getUserFromPayload());

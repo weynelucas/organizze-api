@@ -1,12 +1,13 @@
 const router = require('express').Router();
-const auth = require('./auth');
+
+const { isAuthenticated } = require('../middlewares/auth');
 const { APIError } = require('../errors/api');
 
 
 router.use('/', require('./users'));
-router.use('/transactions', auth.required);
+router.use('/transactions', isAuthenticated());
 router.use('/transactions', require('./transactions'));
-router.use('/tags', auth.required);
+router.use('/tags', isAuthenticated());
 router.use('/tags', require('./tags'));
 
 
@@ -19,25 +20,13 @@ router.use((err, req, res, next) => {
   return next(err);
 });
 
-// Handle moongose validation error
-router.use((err, req, res, next) => {
-  if (err.name === 'ValidationError') {
-    res.status(400);
-    return res.json(Object.keys(err.errors).reduce((errors, key) => {
-      errors[key] = err.errors[key].message;
-      return errors;
-    }, {}));
-  }
 
-  return next(err);
-});
-
-// Handle http errors
 router.use((err, req, res, next) => {
   if (err instanceof APIError) {
+    const { code, message } = err;
     return res
       .status(err.statusCode)
-      .json({ message: err.message });
+      .json({ code, message });
   }
 
   return next(err);

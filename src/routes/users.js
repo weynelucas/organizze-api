@@ -2,11 +2,11 @@ const router = require('express').Router();
 const { model } = require('mongoose');
 
 const User = model('User');
-const { required } = require('./auth');
 const validate = require('../middlewares/validate');
+const { isAuthenticated } = require('../middlewares/auth');
 const auth = require('../services/auth');
-const { AuthenticationFailedError } = require('../errors/api');
 const validators = require('../validators/users');
+const { AuthenticationFailedError } = require('../errors/api');
 
 
 router.post('/login', validate(validators.login), async (req, res, next) => {
@@ -33,7 +33,7 @@ router.post('/signup', validate(validators.signup), (req, res, next) => {
 });
 
 
-router.get('/user', required, (req, res, next) => {
+router.get('/user', isAuthenticated(), (req, res, next) => {
   return res.json(req.user.toRepresentation());
 });
 
