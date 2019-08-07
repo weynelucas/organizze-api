@@ -6,7 +6,7 @@ function validateReference(model, value, slug='_id') {
     if (!doc) {
       return Promise.reject(
         `${model.modelName.toLowerCase()} with ${slug}=${value} not found.`
-      )
+      );
     }
   });
 }
@@ -40,7 +40,7 @@ function isDate(formats=['YYYY-MM-DD']) {
       throw new Error(`Date has wrong format. Use one of these formats instead: ${formats.join(', ')}`);
     }
 
-    return true
+    return true;
   };
 }
 
