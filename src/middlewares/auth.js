@@ -8,19 +8,18 @@ const { AuthenticationFailedError } = require('../errors/api');
 
 function getUserFromPayload({ requestProperty='user', raiseException=true }) {
   return async (req, res, next) => {
-    if (req.payload) {
-      const user = await User.findById(req.payload.id);
-      
-      if (!user && raiseException) {
-        return next(new AuthenticationFailedError('User not found.'));
-      } 
-
-      // eslint-disable-next-line require-atomic-updates
-      req[requestProperty] = user;
+    if (req.payload !== undefined) {
+      User.findById(req.payload.id).then(user => {
+        if (!user && raiseException) {
+          return next(new AuthenticationFailedError('User not found.'));
+        } 
+  
+        req[requestProperty] = user;
+        return next();
+      });
     }
   };
 }
-
 
 function getTokenFromHeaderOrQuery(req) {
   if (
@@ -34,16 +33,17 @@ function getTokenFromHeaderOrQuery(req) {
   return null;
 }
 
-
 module.exports = {
-  isAuthenticated(reloadUser=true) {
+  isAuthenticated({ 
+    secret=settings.secret,
+    requestProperty='payload',
+    getToken=getTokenFromHeaderOrQuery,
+    reloadUser=true,
+    ...rest
+  }) {
     const stack = [];
 
-    stack.push(jwt({
-      secret: settings.secret,
-      requestProperty: 'payload',
-      getToken: getTokenFromHeaderOrQuery
-    }));
+    stack.push(jwt({ secret, requestProperty, getToken, ...rest }));
 
     if (reloadUser) {
       stack.push(getUserFromPayload());
