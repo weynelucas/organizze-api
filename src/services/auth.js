@@ -14,14 +14,9 @@ module.exports = {
       
       if (match) {
         user.lastLogin = Date.now();
-        return { 
-          user: await user.save(),
-          token: this.generateToken(user)
-        };
+        return await user.save();
       }
     }
-
-    return {}
   },
 
   generateToken({ _id: id, email }) {
