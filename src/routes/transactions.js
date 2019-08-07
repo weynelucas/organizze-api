@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const { NotFoundError } = require('../errors/api');
 const Transaction = mongoose.model('Transaction');
+const validate = require('../middlewares/validate');
+const validators = require('../validators/transactions');
 
 const payload = ({ __v, _id, user, createdAt, ...rest }) => rest;
 
@@ -44,10 +46,13 @@ const filters = (req) => {
 
 // Preload transaction on routes with :id
 router.param('id', async (req, res, next) => {
-  const transaction = await Transaction.findOne({ 
-    _id:  req.params.id, 
-    user: req.user.id
-  }).select('-user');
+  const transaction = await Transaction
+    .findOne({ 
+      _id:  req.params.id, 
+      user: req.user.id
+    })
+    .select('-user')
+    .populate('tags');
 
   if (!transaction) return next(new NotFoundError());
 
@@ -71,7 +76,7 @@ router.get('/', async (req, res) => {
 
 
 // Create transaction
-router.post('/', (req, res, next) => {
+router.post('/', validate(validators.create), (req, res, next) => {
   const transaction = new Transaction(payload(req.body));
   transaction.user = req.user;
 
@@ -88,7 +93,7 @@ router.get('/:id', (req, res) => {
 
 
 // Update transaction
-router.put('/:id', (req, res, next) => {
+router.put('/:id', validate(validators.create), (req, res, next) => {
   const transaction = req.transaction.set(payload(req.body));
 
   transaction.save().then((doc) => {

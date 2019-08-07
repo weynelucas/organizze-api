@@ -23,4 +23,4 @@ TagSchema.index(
 
 TagSchema.plugin(uniqueValidator);
 
-module.exports = model('Tag', TagSchema);
+model('Tag', TagSchema);

@@ -31,7 +31,7 @@ UserSchema.plugin(uniqueValidator);
 UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
 
-  bcrypt.genSalt(settings.rounds || 10, (err, salt) => {
+  bcrypt.genSalt(settings.rounds, (err, salt) => {
     if (err) next(err);
 
     bcrypt.hash(this.password, salt, (err, hash) => {
