@@ -2,6 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const User = model('User');
+const { uniqueValidator } = require('./custom');
 
 
 const login = checkSchema({
@@ -32,13 +33,7 @@ const signup = checkSchema({
       errorMessage: 'Enter a valid e-mail address.'
     },
     custom: {
-      options: (email, { req, location, path }) => {
-        return User.findOne({ email }).then(user => {
-          if (user) {
-            return Promise.reject('E-mail already in use');
-          }
-        });
-      }
+      options: uniqueValidator('User', 'email')
     }
   },
   password: {

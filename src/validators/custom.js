@@ -21,6 +21,18 @@ function referenceValidator(ref, slug='_id') {
   };
 }
 
+function uniqueValidator(ref, slug, label) {
+  return (value, { req, path, local }) => {
+    let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
+
+    return model.findOne({ [slug]: value}).then(doc => {
+      if (doc) 
+        return Promise.reject(`${label || slug} already in use.`);
+    });
+  };
+}
+
 module.exports = {
   referenceValidator,
-}
+  uniqueValidator,
+};
