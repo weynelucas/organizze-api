@@ -8,16 +8,20 @@ const Status = {
 
 
 class APIError extends Error {
-  constructor(message) {
+  constructor(
+    message='A server error ocurred.', 
+    status=Status.HTTP_500_INTERNAL_SERVER_ERROR, 
+    code='error',
+  ) {
     super(message);
 
     // Ensure the name of this error is the same as the class name
     this.name = this.constructor.name;
 
     // API error properties
-    this.code = 'error';
-    this.message = message || 'A server error occurred.';
-    this.statusCode = Status.HTTP_500_INTERNAL_SERVER_ERROR;
+    this.code = code;
+    this.message = message;
+    this.statusCode = status;
 
     Error.captureStackTrace(this, this.constructor);
   }
@@ -25,45 +29,38 @@ class APIError extends Error {
 
 
 class NotFoundError extends APIError {
-  constructor(message) {
-    super(message);
-
-    this.code = 'not_found';
-    this.message = message || 'Not found.';
-    this.statusCode = Status.HTTP_404_NOT_FOUND;
+  constructor(message='Not found.', code='not_found') {
+    super(message, Status.HTTP_404_NOT_FOUND, code);
   }
 }
 
 
 class AuthenticationFailedError extends APIError {
-  constructor(message) {
-    super(message);
-
-    this.code = 'authentication_failed';
-    this.message = message || 'Incorrect authentication credentials.';
-    this.statusCode = Status.HTTP_401_UNAUTHORIZED;
+  constructor(
+    message='Incorrect authentication credentials.', 
+    code='authentication_failed'
+  ) {
+    super(message, Status.HTTP_401_UNAUTHORIZED, code);
   }
 }
 
 
 class NotAuthenticatedError extends APIError {
-  constructor(message) {
-    super(message);
-
-    this.code = 'not_authenticated';
-    this.message = message || 'Authentication credentials were not provided.';
-    this.statusCode = Status.HTTP_401_UNAUTHORIZED;
+  constructor(
+    message='Authentication credentials were not provided.',
+    code='not_authenticated'
+  ) {
+    super(message, Status.HTTP_401_UNAUTHORIZED, code);
   }
 }
 
 
 class PermissionDeniedError extends APIError {
-  constructor(message) {
-    super(message);
-
-    this.code = 'permission_denied';
-    this.message = message || 'You do not have permission to perform this action.';
-    this.statusCode = Status.HTTP_403_FORBIDDEN;
+  constructor(
+    message='You do not have permission to perform this action.',
+    code='permission_denied'
+  ) {
+    super(message, Status.HTTP_403_FORBIDDEN, code);
   }
 }
 
