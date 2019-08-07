@@ -3,11 +3,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireDir = require('require-dir');
 const cors = require('cors');
+const morgan = require('morgan');
 
 
 // Dependencies (local)
 const settings = require('./config');
-const logger = require('./middlewares/logger');
 
 
 // Global app object
@@ -25,7 +25,7 @@ requireDir('./models');
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(logger());
+app.use(morgan('combined'));
 
 
 // Routes
