@@ -2,6 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
+const { referenceValidator } = require('./custom');
 
 const create = checkSchema({
   description: {
@@ -34,18 +35,7 @@ const create = checkSchema({
       errorMessage: 'This field should be an array.',
     },
     custom: {
-      options: (value, { req, path, local }) => {
-        return Tag.find({ _id: { $in: value } }).select('_id').then(docs => {
-          let found = docs.map(({ _id }) => _id.toString());
-          let notfound = value.filter(id => !found.includes(id));
-          
-          if (notfound.length > 0) {
-            return Promise.reject(
-              `The following tags could not be found: ${notfound.join(', ')}`
-            );
-          }
-        });
-      }
+      options: referenceValidator(Tag)
     }
   }
 });
