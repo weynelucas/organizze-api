@@ -2,13 +2,15 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
-const { referenceValidator } = require('./custom');
+const { isReference, isDate } = require('./custom');
 
 const create = checkSchema({
   description: {
+    in: ['body'],
     isEmpty: { negated: true, errorMessage: 'This field is required.' }
   },
   activityType: {
+    in: ['body'],
     isEmpty: { negated: true, errorMessage: 'This field is required.' },
     isIn: {
       options: ['earning', 'expense'],
@@ -16,26 +18,32 @@ const create = checkSchema({
     }
   },
   date: {
+    in: ['body'],
     isEmpty: { negated: true, errorMessage: 'This field is required.' },
+    custom: {
+      options: isDate(),
+    }
   },
   ammount: {
+    in: ['body'],
     isEmpty: { negated: true, errorMessage: 'This field is required.' },
-    isFloat: {
-      options: { gt: 0 },
-      errorMessage: 'This field should be float and greater than 0',
+    isNumeric: {
+      errorMessage: 'This field should be numeric.',
     }
   },
   done: {
+    in: ['body'],
     optional: true,
     isBoolean: { errorMessage: 'This field should be a boolean.' },
   },
   tags: {
+    in: ['body'],
     optional: true,
     isArray: {
       errorMessage: 'This field should be an array.',
     },
     custom: {
-      options: referenceValidator(Tag)
+      options: isReference(Tag)
     }
   }
 });

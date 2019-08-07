@@ -2,7 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const User = model('User');
-const { uniqueValidator } = require('./custom');
+const { isUnique } = require('./custom');
 
 
 const login = checkSchema({
@@ -33,7 +33,7 @@ const signup = checkSchema({
       errorMessage: 'Enter a valid e-mail address.'
     },
     custom: {
-      options: uniqueValidator('User', 'email')
+      options: isUnique(User, 'email')
     }
   },
   password: {

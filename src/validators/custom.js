@@ -1,3 +1,4 @@
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 function validateReference(model, value, slug='_id') {
@@ -10,7 +11,7 @@ function validateReference(model, value, slug='_id') {
   });
 }
 
-function referenceValidator(ref, slug='_id') {
+function isReference(ref, slug='_id') {
   return (value, { req, path, local }) => {
     let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
     let promises = Array.isArray(value) ?
@@ -21,18 +22,26 @@ function referenceValidator(ref, slug='_id') {
   };
 }
 
-function uniqueValidator(ref, slug, label) {
+function isUnique(ref, slug) {
   return (value, { req, path, local }) => {
     let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
 
     return model.findOne({ [slug]: value}).then(doc => {
-      if (doc) 
-        return Promise.reject(`${label || slug} already in use.`);
+      if (!doc) {
+        return Promise.reject('This field must be unique.');
+      }
     });
   };
 }
 
-module.exports = {
-  referenceValidator,
-  uniqueValidator,
-};
+function isDate(formats=['YYYY-MM-DD']) {
+  return (value, { req, path, local }) => {
+    if (!moment(value, formats, true).isValid()) {
+      throw new Error(`Date has wrong format. Use one of these formats instead: ${formats.join(', ')}`);
+    }
+
+    return true
+  };
+}
+
+module.exports = { isReference, isUnique, isDate };
