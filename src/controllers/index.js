@@ -95,9 +95,9 @@ class BaseController {
 
   async create(req, res, next) {
     try {
-      const object = this.model(req.body);
+      var object = this.model(req.body);
   
-      await this.performSave(req, object);
+      object = await this.performSave(req, object);
       return res.status(201).json(object.toJSON());
     } catch (err) {
       return next(err);
@@ -106,9 +106,9 @@ class BaseController {
 
   async update(req, res, next) {
     try {
-      const object = await this.getObject(req);
+      var object = await this.getObject(req);
 
-      await this.performSave(req, object);
+      object = await this.performSave(req, object);
       return res.json(object.toJSON());
     } catch (err) {
       return next(err);
