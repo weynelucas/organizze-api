@@ -49,7 +49,9 @@ class TransactionController extends BaseController {
       }
     }
 
-    return documents.find(filters);
+    return documents
+      .find(filters)
+      .select('-user -observation -tags');
   }
 }
 
