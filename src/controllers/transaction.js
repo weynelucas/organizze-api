@@ -6,16 +6,15 @@ class TransactionController extends BaseController {
     super('Transaction');
   }
 
-  getDocuments({ user: { id: userId } }) {
-    return this.model.find({ user: userId });
-  }
-
   performSave(req, object) {
     const { __v, _id, user, createdAt, updatedAt, ...rest } = req.body;
-    object.set(rest);
-    object.user = req.user;
+    object.set({ ...rest, user: req.user });
 
     return object.save();
+  }
+
+  getDocuments({ user: { id: userId } }) {
+    return this.model.find({ user: userId });
   }
 
   filterDocuments(req, documents) {
@@ -52,7 +51,6 @@ class TransactionController extends BaseController {
 
     return documents.find(filters);
   }
-
 }
 
 

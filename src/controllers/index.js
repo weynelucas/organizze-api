@@ -71,7 +71,7 @@ class BaseController {
    * @param {Object} req The incoming request
    * @param {Object} object The instance of the model to save
    */
-  async performSave(req, object) {
+  performSave(req, object) {
     object.set(req.body);
     return object.save();
   }
