@@ -23,7 +23,7 @@ class TransactionController extends BaseController {
     const filters = {};
   
     if (search) {
-      filters['$text'] = { 
+      filters.$text = { 
         $search: search,
         $caseSensitive: false,
       };
@@ -41,11 +41,11 @@ class TransactionController extends BaseController {
       filters.date = {};
   
       if (startDate) {
-        filters.date['$gte'] = new Date(startDate);
+        filters.date.$gte = new Date(startDate);
       }
   
       if (endDate) {
-        filters.date['$lte'] = new Date(endDate);
+        filters.date.$lte = new Date(endDate);
       }
     }
 
