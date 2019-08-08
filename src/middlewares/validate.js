@@ -1,8 +1,23 @@
-const { validationResult } = require('express-validator');
+const { validationResult, check } = require('express-validator');
 
-module.exports = validations => {
+
+const isInRequest = (req, locations, path) => {
+  return locations.some(local => {
+    return Object.keys(req[local]).includes(path);
+  });
+}
+
+
+module.exports = (validations, partial=false) => {
   return async (req, res, next) => {
-    await Promise.all(validations.map(validation => validation.run(req)));
+    await Promise.all(validations.map(validation => {
+      const { locations, fields: [field, , ] } = validation.builder;
+
+      if(!partial || (partial && isInRequest(req, locations, field))) {
+        return validation.run(req);
+      }
+
+    }));
 
     const errors = validationResult(req);
     if (errors.isEmpty()) {

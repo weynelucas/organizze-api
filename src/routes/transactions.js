@@ -93,7 +93,7 @@ router.get('/:id', (req, res) => {
 
 
 // Update transaction
-router.put('/:id', validate(validators.store), (req, res, next) => {
+router.put('/:id', validate(validators.store, true), (req, res, next) => {
   const transaction = req.transaction.set(payload(req.body));
 
   transaction.save().then((doc) => {
