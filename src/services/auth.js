@@ -26,4 +26,4 @@ module.exports = {
       { expiresIn: settings.tokenLifetime }
     );
   }
-}
+};
