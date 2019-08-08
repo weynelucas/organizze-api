@@ -7,11 +7,12 @@ const { isReference, isDate } = require('./custom');
 const store = checkSchema({
   description: {
     in: ['body'],
-    isEmpty: { negated: true, errorMessage: 'This field is required.' }
+    exists: { errorMessage: 'This field is required.' },
+    isEmpty: { negated: true, errorMessage: 'This field cannot be blank.' } 
   },
   activityType: {
     in: ['body'],
-    isEmpty: { negated: true, errorMessage: 'This field is required.' },
+    exists: { errorMessage: 'This field is required.' },
     isIn: {
       options: ['earning', 'expense'],
       errorMessage: 'Is not a valid choice.'
@@ -19,14 +20,14 @@ const store = checkSchema({
   },
   date: {
     in: ['body'],
-    isEmpty: { negated: true, errorMessage: 'This field is required.' },
+    exists: { errorMessage: 'This field is required.' },
     custom: {
       options: isDate(),
     }
   },
   ammount: {
     in: ['body'],
-    isEmpty: { negated: true, errorMessage: 'This field is required.' },
+    exists: { errorMessage: 'This field is required.' },
     isNumeric: {
       errorMessage: 'This field should be numeric.',
     }
@@ -35,6 +36,11 @@ const store = checkSchema({
     in: ['body'],
     optional: true,
     isBoolean: { errorMessage: 'This field should be a boolean.' },
+  },
+  observation: {
+    in: ['body'],
+    optional: true,
+    isEmpty: { negated: true, errorMessage: 'This field cannot be blank.' }
   },
   tags: {
     in: ['body'],

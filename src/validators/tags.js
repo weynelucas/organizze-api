@@ -5,9 +5,10 @@ const Tag = model('Tag');
 
 const store = checkSchema({
   description: {
+    exists: { errorMessage: 'This field is required.' },
     isEmpty: {
       negated: true,
-      errorMessage: 'This field is required.'
+      errorMessage: 'This cannot be blank.'
     },
     custom: {
       options: (value, { req, path, local }) => {
