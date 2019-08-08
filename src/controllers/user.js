@@ -2,6 +2,7 @@ const { model } = require('mongoose');
 
 const User = model('User');
 const auth = require('../services/auth');
+const { AuthenticationFailedError } = require('../errors/api');
 
 module.exports = {
   async login(req, res, next) {
@@ -20,7 +21,7 @@ module.exports = {
   async signup(req, res, next) {
     const { name, email, password } = req.body;
 
-    var user = new User({ user, email, password });
+    var user = new User({ name, email, password });
     user = await user.save();
 
     return res.status(201).json({
@@ -30,6 +31,6 @@ module.exports = {
   },
 
   async user(req, res, next) {
-    return res.json(user.toJSON());
+    return res.json(req.user.toJSON());
   }
 }

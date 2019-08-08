@@ -42,4 +42,18 @@ const TransactionSchema = new Schema({
   timestamps: true
 });
 
+TransactionSchema.methods.toJSON = function () {
+  return {
+    id: this.id,
+    activityType: this.activityType,
+    description: this.description,
+    date: this.date,
+    done: this.done,
+    observation: this.observation,
+    tags: this.tags,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  }
+}
+
 model('Transaction', TransactionSchema);

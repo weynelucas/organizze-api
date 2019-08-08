@@ -21,7 +21,7 @@ const store = checkSchema({
           criteria._id = { $ne: req.tag._id };
         } 
 
-        return Tag.count(criteria).then(count => {
+        return Tag.countDocuments(criteria).then(count => {
           if (count) {
             return Promise.reject('This field must be unique.');
           }

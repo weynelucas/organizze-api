@@ -18,4 +18,13 @@ const TagSchema = new Schema({
 
 TagSchema.plugin(uniqueValidator);
 
+TagSchema.methods.toJSON = function () {
+  return {
+    id: this.id,
+    descritption: this.description, 
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  }
+}
+
 model('Tag', TagSchema);

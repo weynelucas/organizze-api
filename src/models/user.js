@@ -43,12 +43,14 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-UserSchema.methods.toRepresentation = function () {
+UserSchema.methods.toJSON = function () {
   return {
+    id: this.id,
     name: this.name,
     email: this.email,
     isActive: this.isActive,
-    lastLogin: this.lastLogin,
+    dateJoined: this.createdAt,
+    dateLastLogin: this.lastLogin,
   };
 };
 
