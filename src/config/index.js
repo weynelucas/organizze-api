@@ -1,5 +1,6 @@
 module.exports = {
   port: process.env.PORT || 3100,
+  rounds: process.env.SALT_ROUNDS || 10,
   secret: process.env.SECRET_KEY || 'secret',
-  rounds: process.env.SALT_ROUNDS || 10
+  tokenLifetime: process.env.TOKEN_LIFETIME || '1h'
 };

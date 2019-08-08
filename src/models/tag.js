@@ -1,30 +1,27 @@
-const mongoose = require('mongoose');
-const unique = require('mongoose-unique-validator');
+const { Schema, model } = require('mongoose');
 
-
-const TagSchema = new mongoose.Schema({
+const TagSchema = new Schema({
   description: {
     type: String,
     text: true,
     required: true,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true
 });
 
-TagSchema.index(
-  { description: 1, user: 1 }, 
-  { unique: true }
-);
+TagSchema.methods.toJSON = function () {
+  return {
+    id: this.id,
+    descritption: this.description, 
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  }
+}
 
-TagSchema.plugin(unique);
-
-
-mongoose.model('Tag', TagSchema);
+model('Tag', TagSchema);

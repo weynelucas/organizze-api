@@ -6,23 +6,20 @@ const settings = require('../config');
 const { AuthenticationFailedError } = require('../errors/api');
 
 
-// Middleware to preload user from database
-function getuser() {
+function getUserFromPayload(requestProperty='user', raiseException=true) {
   return async (req, res, next) => {
-    if (req.payload) {
-      const user = await User.findById(req.payload.id);
-
-      if (!user) {
-        return next(new AuthenticationFailedError('User not found.'));
-      }
-
-      req.user = user;
+    if (req.payload !== undefined) {
+      User.findById(req.payload.id).then(user => {
+        if (!user && raiseException) {
+          return next(new AuthenticationFailedError('User not found.'));
+        } 
+  
+        req[requestProperty] = user;
+        return next();
+      });
     }
-
-    return next();
   };
 }
-
 
 function getTokenFromHeaderOrQuery(req) {
   if (
@@ -36,21 +33,20 @@ function getTokenFromHeaderOrQuery(req) {
   return null;
 }
 
-
 module.exports = {
-  required: [
-    jwt({
+  isAuthenticated(reloadUser=true) {
+    const stack = [];
+
+    stack.push(jwt({
       secret: settings.secret,
       requestProperty: 'payload',
-      getToken: getTokenFromHeaderOrQuery,
-    }), getuser()
-  ],
-  optional: [
-    jwt({
-      secret: settings.secret,
-      requestProperty: 'payload',
-      credentialsRequired: false,
-      getToken: getTokenFromHeaderOrQuery,
-    }), getuser()
-  ]
+      getToken: getTokenFromHeaderOrQuery
+    }));
+
+    if (reloadUser) {
+      stack.push(getUserFromPayload());
+    }
+
+    return stack;
+  }
 };

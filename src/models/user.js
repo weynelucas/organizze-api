@@ -1,12 +1,10 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const mongose = require('mongoose');
-const unique = require('mongoose-unique-validator');
+const { Schema, model }= require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const settings = require('../config');
 
-
-const UserSchema = new mongose.Schema({
+const UserSchema = new Schema({
   name: String,
   email: {
     type: String,
@@ -24,14 +22,16 @@ const UserSchema = new mongose.Schema({
     default: true,
   },
   lastLogin: Date,
+}, {
+  timestamps: true
 });
 
-UserSchema.plugin(unique);
+UserSchema.plugin(uniqueValidator);
 
 UserSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
 
-  bcrypt.genSalt(settings.rounds || 10, (err, salt) => {
+  bcrypt.genSalt(settings.rounds, (err, salt) => {
     if (err) next(err);
 
     bcrypt.hash(this.password, salt, (err, hash) => {
@@ -43,23 +43,15 @@ UserSchema.pre('save', function(next) {
   });
 });
 
-UserSchema.methods.jwt = function() {
-  return jwt.sign({
-    id: this._id,
-    email: this.email,
-    exp: Math.floor((Date.now()/1000) + (60*60))
-  }, settings.secret);
-};
-
-UserSchema.methods.toRepresentation = function () {
+UserSchema.methods.toJSON = function () {
   return {
+    id: this.id,
     name: this.name,
     email: this.email,
     isActive: this.isActive,
-    lastLogin: this.lastLogin,
-    token: this.jwt()
+    dateJoined: this.createdAt,
+    dateLastLogin: this.lastLogin,
   };
 };
 
-
-mongose.model('User', UserSchema);
+model('User', UserSchema);

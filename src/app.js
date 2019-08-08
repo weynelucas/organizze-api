@@ -3,11 +3,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireDir = require('require-dir');
 const cors = require('cors');
+const morgan = require('morgan');
 
 
 // Dependencies (local)
-const settings = require('./src/config');
-const logger = require('./src/middlewares/logger');
+const settings = require('./config');
 
 
 // Global app object
@@ -19,17 +19,17 @@ mongoose.connect(
   'mongodb://localhost:27017/organizzeapi',
   { useNewUrlParser: true, useCreateIndex: true }
 );
-requireDir('./src/models');
+requireDir('./models');
 
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(logger());
+app.use(morgan('combined'));
 
 
 // Routes
-app.use('/', require('./src/routes'));
+app.use('/', require('./routes'));
 
 
 // Starting server
