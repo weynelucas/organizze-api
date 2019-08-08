@@ -11,7 +11,7 @@ const isInRequest = (req, locations, path) => {
 module.exports = (validations, partial=false) => {
   return async (req, res, next) => {
     await Promise.all(validations.map(validation => {
-      const { locations, fields: [field, , ] } = validation.builder;
+      const { locations, fields: [field] } = validation.builder;
 
       if(!partial || (partial && isInRequest(req, locations, field))) {
         return validation.run(req);
