@@ -27,7 +27,7 @@ function isUnique(ref, slug) {
     let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
 
     return model.findOne({ [slug]: value}).then(doc => {
-      if (!doc) {
+      if (doc) {
         return Promise.reject('This field must be unique.');
       }
     });

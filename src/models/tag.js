@@ -16,11 +16,6 @@ const TagSchema = new Schema({
   timestamps: true
 });
 
-TagSchema.index(
-  { description: 1, user: 1 }, 
-  { unique: true }
-);
-
 TagSchema.plugin(uniqueValidator);
 
 model('Tag', TagSchema);
