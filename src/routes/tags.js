@@ -2,6 +2,8 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 
 const Tag = mongoose.model('Tag');
+const validate = require('../middlewares/validate');
+const validators = require('../validators/tags');
 const { NotFoundError } = require('../errors/api');
 
 const payload = ({ description }) => description ? { description } : {};
@@ -43,7 +45,7 @@ router.get('/', async (req, res) => {
 
 
 // Create tag
-router.post('/', (req, res, next) => {
+router.post('/', validate(validators.store), (req, res, next) => {
   const tag = new Tag(payload(req.body));
   tag.user = req.user;
 
@@ -60,7 +62,7 @@ router.get('/:id', (req, res) => {
 
 
 // Update tag
-router.put('/:id', (req, res, next) => {
+router.put('/:id', validate(validators.store), (req, res, next) => {
   const tag = req.tag.set(payload(req.body));
 
   tag.save().then((doc) => {

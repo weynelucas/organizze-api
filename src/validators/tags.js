@@ -1,0 +1,34 @@
+const { model } = require('mongoose');
+const { checkSchema } = require('express-validator');
+
+const Tag = model('Tag');
+
+const store = checkSchema({
+  description: {
+    isEmpty: {
+      negated: true,
+      errorMessage: 'This field is required.'
+    },
+    custom: {
+      options: (value, { req, path, local }) => {
+        let criteria = {
+          description: value,
+          user: req.user._id,
+        };
+
+        if (req.tag !== undefined) {
+          criteria._id = { $ne: req.tag._id };
+        } 
+
+        return Tag.count(criteria).then(count => {
+          if (count) {
+            return Promise.reject('This field must be unique.');
+          }
+        });
+      }
+    }
+  }
+});
+
+
+module.exports = { store };

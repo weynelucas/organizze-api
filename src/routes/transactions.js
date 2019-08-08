@@ -76,7 +76,7 @@ router.get('/', async (req, res) => {
 
 
 // Create transaction
-router.post('/', validate(validators.create), (req, res, next) => {
+router.post('/', validate(validators.store), (req, res, next) => {
   const transaction = new Transaction(payload(req.body));
   transaction.user = req.user;
 
@@ -93,7 +93,7 @@ router.get('/:id', (req, res) => {
 
 
 // Update transaction
-router.put('/:id', validate(validators.create), (req, res, next) => {
+router.put('/:id', validate(validators.store), (req, res, next) => {
   const transaction = req.transaction.set(payload(req.body));
 
   transaction.save().then((doc) => {
