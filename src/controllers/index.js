@@ -42,7 +42,7 @@ class BaseController {
     // Perform the lookup filtering
     const object = await this.getDocuments(req)
       .findOne({
-        [this.lookupField]: req.param[this.lookupFieldParam] 
+        [this.lookupField]: req.params[this.lookupFieldParam] 
       });
 
     // Raise not found error
@@ -97,7 +97,7 @@ class BaseController {
     try {
       const object = this.model(req.body);
   
-      await object.save(req.body);
+      await this.performSave(req, object);
       return res.status(201).json(object.toJSON());
     } catch (err) {
       return next(err);
@@ -106,8 +106,9 @@ class BaseController {
 
   async update(req, res, next) {
     try {
-      const object = this.getObject(req);
-      await object.save(req.body);
+      const object = await this.getObject(req);
+
+      await this.performSave(req, object);
       return res.json(object.toJSON());
     } catch (err) {
       return next(err);

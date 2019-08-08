@@ -10,6 +10,13 @@ class TransactionController extends BaseController {
     return this.model.find({ user: userId });
   }
 
+  performSave(req, object) {
+    const { __v, _id, user, createdAt, updatedAt, ...rest } = req.body;
+    object.user = req.user;
+
+    return object.save({ user, ...rest });
+  }
+
   filterDocuments(req, documents) {
     const { search, done, activityType, startDate, endDate } = req.query;
 
