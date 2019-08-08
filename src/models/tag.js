@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const TagSchema = new Schema({
   description: {
@@ -15,8 +14,6 @@ const TagSchema = new Schema({
 }, {
   timestamps: true
 });
-
-TagSchema.plugin(uniqueValidator);
 
 TagSchema.methods.toJSON = function () {
   return {
