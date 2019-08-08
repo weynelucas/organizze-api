@@ -62,7 +62,7 @@ router.get('/:id', (req, res) => {
 
 
 // Update tag
-router.put('/:id', validate(validators.store), (req, res, next) => {
+router.put('/:id', validate(validators.store, false), (req, res, next) => {
   const tag = req.tag.set(payload(req.body));
 
   tag.save().then((doc) => {
