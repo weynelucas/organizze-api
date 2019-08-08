@@ -66,6 +66,7 @@ class PermissionDeniedError extends APIError {
 
 
 module.exports = { 
+  Status,
   APIError, 
   NotFoundError, 
   AuthenticationFailedError, 

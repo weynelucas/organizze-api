@@ -1,113 +1,16 @@
 const router = require('express').Router();
-const mongoose = require('mongoose');
 
-const { NotFoundError } = require('../errors/api');
-const Transaction = mongoose.model('Transaction');
 const validate = require('../middlewares/validate');
 const validators = require('../validators/transactions');
+const TransactionController = require('../controllers/transaction');
 
-const payload = ({ __v, _id, user, createdAt, ...rest }) => rest;
+const controller = new TransactionController();
 
-const filters = (req) => {
-  const { search, done, activityType, startDate, endDate } = req.query;
-
-  const filters = { user: req.user.id };
-
-  if (search) {
-    filters['$text'] = { 
-      $search: search,
-      $caseSensitive: false,
-    };
-  }
-
-  if (['true', 'false'].includes(done)) {
-    filters.done = done === 'true';
-  }
-
-  if (activityType) {
-    filters.activityType = activityType;
-  }
-
-  if (startDate || endDate) {
-    filters.date = {};
-
-    if (startDate) {
-      filters.date['$gte'] = new Date(startDate);
-    }
-
-    if (endDate) {
-      filters.date['$lte'] = new Date(endDate);
-    }
-  }
-
-  return filters;
-};
-
-
-// Preload transaction on routes with :id
-router.param('id', async (req, res, next) => {
-  const transaction = await Transaction
-    .findOne({ 
-      _id:  req.params.id, 
-      user: req.user.id
-    })
-    .select('-user')
-    .populate('tags');
-
-  if (!transaction) return next(new NotFoundError());
-
-  req.transaction = transaction;
-  return next();
-});
-
-
-// List transactions
-router.get('/', async (req, res) => {
-  const transactions = await Transaction
-    .find(filters(req))
-    .select([
-      '-user', 
-      '-observation', 
-      '-tags', '-__v',
-    ]);
-
-  return res.json({ transactions });
-});
-
-
-// Create transaction
-router.post('/', validate(validators.store), (req, res, next) => {
-  const transaction = new Transaction(payload(req.body));
-  transaction.user = req.user;
-
-  transaction.save().then((doc) => {
-    return res.status(201).json(doc);
-  }).catch(next);
-});
-
-
-// Retrieve transaction
-router.get('/:id', (req, res) => {
-  return res.json(req.transaction);
-});
-
-
-// Update transaction
-router.put('/:id', validate(validators.store, true), (req, res, next) => {
-  const transaction = req.transaction.set(payload(req.body));
-
-  transaction.save().then((doc) => {
-    return res.status(200).json(doc);
-  }).catch(next);
-});
-
-
-// Delete transaction
-router.delete('/:id', async (req, res) => {
-  await req.transaction.remove();
-
-  return res.status(204).json();
-});
-
+router.get('/', controller.list);
+router.post('/', validate(validators.store), controller.create);
+router.get('/:id', controller.retrieve);
+router.put('/:id', validate(validators.store), controller.update);
+router.patch('/:id', validate(validators.store, true), controller.update);
+router.delete('/:id', controller.update);
 
 module.exports = router;

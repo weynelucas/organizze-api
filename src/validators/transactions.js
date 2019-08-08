@@ -14,7 +14,7 @@ const store = checkSchema({
     in: ['body'],
     exists: { errorMessage: 'This field is required.' },
     isIn: {
-      options: ['earning', 'expense'],
+      options: [['earning', 'expense']],
       errorMessage: 'Is not a valid choice.'
     }
   },
