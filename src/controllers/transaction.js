@@ -12,9 +12,10 @@ class TransactionController extends BaseController {
 
   performSave(req, object) {
     const { __v, _id, user, createdAt, updatedAt, ...rest } = req.body;
+    object.set(rest);
     object.user = req.user;
 
-    return object.save({ user, ...rest });
+    return object.save();
   }
 
   filterDocuments(req, documents) {

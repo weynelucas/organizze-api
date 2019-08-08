@@ -71,8 +71,9 @@ class BaseController {
    * @param {Object} req The incoming request
    * @param {Object} object The instance of the model to save
    */
-  performSave(req, object) {
-    return object.save(req.body);
+  async performSave(req, object) {
+    object.set(req.body);
+    return object.save();
   }
 
   async list(req, res, next) {
@@ -95,7 +96,7 @@ class BaseController {
 
   async create(req, res, next) {
     try {
-      var object = this.model(req.body);
+      var object = this.model();
   
       object = await this.performSave(req, object);
       return res.status(201).json(object.toJSON());
