@@ -15,6 +15,7 @@
     "nodemon": "^1.19.1"
   },
   "dependencies": {
+    "auto-bind": "^2.1.0",
     "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
     "express": "^4.17.1",

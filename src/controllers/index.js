@@ -1,4 +1,6 @@
+const autobind = require('auto-bind');
 const mongoose = require('mongoose')
+
 const { NotFoundError } = require('../errors/api');
 
 class BaseController {
@@ -13,17 +15,8 @@ class BaseController {
     this.lookupField = lookupField;
     this.lookupFieldParam = lookupFieldParam || lookupField;
 
-    // Bind methods
-    this.getObject = this.getObject.bind(this);
-    this.getDocuments = this.getDocuments.bind(this);
-    this.filterDocuments = this.filterDocuments.bind(this);
-
-    // Bind routes
-    this.list = this.list.bind(this);
-    this.create = this.create.bind(this);
-    this.retrieve = this.retrieve.bind(this);
-    this.update = this.update.bind(this);
-    this.delete = this.delete.bind(this);
+    // Automatically bind methods to their class instance
+    autobind(this);
   }
 
 
@@ -73,8 +66,16 @@ class BaseController {
     return documents;
   }
 
+  /**
+   * Saves a model instance.
+   * @param {Object} req The incoming request
+   * @param {Object} object The instance of the model to save
+   */
+  performSave(req, object) {
+    return object.save(req.body);
+  }
+
   async list(req, res, next) {
-    const documents = this.getDocuments(req);
     const results = await this.filterDocuments(req, this.getDocuments(req));
 
     return res.json({
