@@ -53,7 +53,7 @@ TransactionSchema.methods.toJSON = function () {
     tags: this.tags,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
-  }
-}
+  };
+};
 
 model('Transaction', TransactionSchema);

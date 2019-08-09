@@ -21,7 +21,7 @@ TagSchema.methods.toJSON = function () {
     descritption: this.description, 
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
-  }
-}
+  };
+};
 
 model('Tag', TagSchema);
