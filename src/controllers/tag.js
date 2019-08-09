@@ -17,13 +17,13 @@ class TagController extends BaseController {
   }
 
   filterDocuments({ query: { search } }, documents) {
-    const filters = {}
+    const filters = {};
 
     if (search) {
       filters.$text = {
         $search: search,
         $caseSensitive: false,
-      }
+      };
     }
 
     return documents.find(filters).select('-user');

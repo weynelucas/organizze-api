@@ -33,4 +33,4 @@ module.exports = {
   async user(req, res, next) {
     return res.json(req.user.toJSON());
   }
-}
+};
