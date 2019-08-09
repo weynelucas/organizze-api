@@ -1,5 +1,5 @@
 const autobind = require('auto-bind');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const { NotFoundError } = require('../errors/api');
 
