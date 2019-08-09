@@ -82,7 +82,7 @@ class BaseController {
     return res.json({
       count: results.length,
       results
-    })
+    });
   }
 
   async retrieve(req, res, next) {
