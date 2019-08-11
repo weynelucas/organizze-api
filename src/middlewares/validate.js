@@ -1,7 +1,7 @@
 const { validationResult, check } = require('express-validator');
 
 
-const isInRequest = (req, locations, path) => {
+function isInRequest(req, locations, path) {
   return locations.some(local => {
     return Object.keys(req[local]).includes(path);
   });
