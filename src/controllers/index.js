@@ -36,7 +36,7 @@ class BaseController {
    * 
    * You may want to override this if you need to provide a non-standart
    * object lookup depending on the incoming request.
-   * @param {Express.Request} req The incoming request object
+   * @param {Object} req The incoming request object
    */
   async getObject(req) {
     // Perform the lookup filtering
@@ -44,7 +44,7 @@ class BaseController {
       .findOne({
         [this.lookupField]: req.params[this.lookupFieldParam] 
       });
-      
+
     // Raise not found error
     if (!object) {
       throw new NotFoundError();
