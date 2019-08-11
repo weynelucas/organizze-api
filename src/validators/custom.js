@@ -37,7 +37,9 @@ function isUnique(ref, slug) {
 function isDate(formats=['YYYY-MM-DD']) {
   return (value, { req, path, local }) => {
     if (!moment(value, formats, true).isValid()) {
-      throw new Error(`Date has wrong format. Use one of these formats instead: ${formats.join(', ')}`);
+      throw new Error(
+        `Date has wrong format. Use one of these formats instead: ${formats.join(', ')}`
+      );
     }
 
     return true;
