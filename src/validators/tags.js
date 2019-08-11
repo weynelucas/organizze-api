@@ -3,7 +3,7 @@ const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
 
-const store = checkSchema({
+module.exports = checkSchema({
   description: {
     exists: { errorMessage: 'This field is required.' },
     isEmpty: {
@@ -30,6 +30,3 @@ const store = checkSchema({
     }
   }
 });
-
-
-module.exports = { store };

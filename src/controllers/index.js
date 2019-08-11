@@ -9,11 +9,18 @@ class BaseController {
    * @param {Model} model The default model object for the controller.
    * @param {string} lookupField The field name for object lookup.
    * @param {string} lookupFieldParam The request param name used for object lookup . 
+   * @param {string} requestProperty The request property name where object will be stored. 
    */
-  constructor(model, lookupField='_id', lookupFieldParam='id') {
+  constructor(
+    model, 
+    lookupField='_id',
+    lookupFieldParam='id',
+    requestProperty='object',
+  ) {
     this.model = typeof model === 'string' ? mongoose.model(model) : model;
     this.lookupField = lookupField;
     this.lookupFieldParam = lookupFieldParam || lookupField;
+    this.requestProperty = requestProperty;
 
     // Automatically bind methods to their class instance
     autobind(this);
@@ -39,6 +46,11 @@ class BaseController {
    * @param {Object} req The incoming request object
    */
   async getObject(req) {
+    // Get object from request
+    if (req[this.requestProperty] !== undefined) {
+      return req[this.requestProperty];
+    }
+
     // Perform the lookup filtering
     const object = await this.getDocuments(req)
       .findOne({
@@ -68,12 +80,28 @@ class BaseController {
 
   /**
    * Saves a model instance.
-   * @param {Object} req The incoming request
+   * @param {Object} req The incoming request object
    * @param {Object} object The instance of the model to save
    */
   performSave(req, object) {
     object.set(req.body);
     return object.save();
+  }
+
+  /**
+   * Handler to load object and store it into the
+   * incoming request object
+   * @param {Object} req The incoming request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware on stack
+   */
+  async loadObject(req, res, next) {
+    try {
+      req[this.requestProperty] = this.getObject(req);
+      return next();
+    } catch (err) {
+      next(err);
+    }
   }
 
   async list(req, res, next) {

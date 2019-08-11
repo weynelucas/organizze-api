@@ -4,7 +4,7 @@ const { checkSchema } = require('express-validator');
 const Tag = model('Tag');
 const { isReference, isDate } = require('./custom');
 
-const store = checkSchema({
+module.exports = checkSchema({
   description: {
     in: ['body'],
     exists: { errorMessage: 'This field is required.' },
@@ -53,6 +53,3 @@ const store = checkSchema({
     }
   }
 });
-
-
-module.exports = { store };

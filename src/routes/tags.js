@@ -1,16 +1,19 @@
 const router = require('express').Router();
 
 const validate = require('../middlewares/validate');
-const validators = require('../validators/tags');
+const validateTag = require('../validators/tags');
 const TagController = require('../controllers/tag');
 
 const controller = new TagController();
+const validator = validate(validateTag);
+const partialValidator = validate(validateTag, true);
 
+router.param('id', controller.loadObject);
 router.get('/', controller.list);
-router.post('/', validate(validators.store), controller.create);
+router.post('/', validator, controller.create);
 router.get('/:id', controller.retrieve);
-router.put('/:id', validate(validators.store), controller.update);
-router.patch('/:id', validate(validators.store, true), controller.update);
-router.delete('/:id', controller.delete);
+router.put('/:id', validator, controller.update);
+router.patch('/:id', partialValidator, controller.update);
+router.delete('/:id', controller.update);
 
 module.exports = router;
