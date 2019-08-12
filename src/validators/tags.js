@@ -11,14 +11,23 @@ module.exports = checkSchema({
       negated: true,
       errorMessage: 'This cannot be blank.'
     },
-    custom: isUnique(Tag, 'description', (value, { req }) => {
-      let query = { user: req.user._id };
-      
-      if (req.object !== undefined) {
-        query._id = { $ne: req.tag._id };
-      }
+    custom: {
+      options: (value, { req, path, local }) => {
+        let criteria = {
+          description: value,
+          user: req.user._id,
+        };
 
-      return query;
-    })
+        if (req.tag !== undefined) {
+          criteria._id = { $ne: req.tag._id };
+        } 
+
+        return Tag.countDocuments(criteria).then(count => {
+          if (count) {
+            return Promise.reject('This field must be unique.');
+          }
+        });
+      }
+    }
   }
 });
