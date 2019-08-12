@@ -3,11 +3,8 @@ const mongoose = require('mongoose');
 
 const getModel = (ref) => typeof ref === 'string' ? mongoose.model(ref) : ref;
 
-function validateRelated(model, value, slug='id', query={}) {
-  return model.findOne({ 
-    [slug]: value, 
-    ...query 
-  }).then(doc => {
+function validateRelated(model, value, slug='_id', query={}) {
+  return model.findOne({ [slug]: value, ...query }).then(doc => {
     if (!doc) {
       return Promise.reject(
         `${model.modelName.toLowerCase()} with ${slug}=${value} not found.`
@@ -16,7 +13,7 @@ function validateRelated(model, value, slug='id', query={}) {
   });
 }
 
-function isRelated(ref, slug='id', options) {
+function isRelated(ref, slug='_id', options) {
   return (value, session) => {
     let model = getModel(ref);
     
@@ -34,13 +31,13 @@ function isRelated(ref, slug='id', options) {
 }
 
 function isUnique(ref, slug, options) {
-  return (value, session) => {
+  return (value, { req, local, path }) => {
     let model = getModel(ref);
-    let query = options !== undefined ? options(value, session) : {};
-    return model.findOne({ 
-      [slug]: value, 
-      ...query 
-    }).then(doc => {
+    let query = options !== undefined 
+      ? options(value, { req, local, path }) 
+      : {};
+
+    return model.findOne({ [slug]: value, ...query }).then(doc => {
       if (doc) {
         return Promise.reject('This field must be unique.');
       }

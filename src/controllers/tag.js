@@ -15,7 +15,7 @@ class TagController extends BaseController {
   }
 
   getDocuments({ user: { _id: userId } }) {
-    return this.model.find({ user: userId});
+    return this.model.find({ user: userId });
   }
 
   filterDocuments({ query: { search } }, documents) {

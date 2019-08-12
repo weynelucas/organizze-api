@@ -49,8 +49,8 @@ module.exports = checkSchema({
       errorMessage: 'This field should be an array.',
     },
     custom: {
-      options: isRelated(Tag, 'id', (value, { req }) => { 
-        return { user: req.user };
+      options: isRelated(Tag, '_id', (value, { req }) => { 
+        return { user: req.user._id };
       })
     }
   }
