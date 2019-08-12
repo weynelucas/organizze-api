@@ -1,8 +1,13 @@
 const moment = require('moment');
 const mongoose = require('mongoose');
 
-function validateReference(model, value, slug='_id') {
-  return model.findOne({ [slug]: value }).then(doc => {
+const getModel = (ref) => typeof ref === 'string' ? mongoose.model(ref) : ref;
+
+function validateRelated(model, value, slug='id', query={}) {
+  return model.findOne({ 
+    [slug]: value, 
+    ...query 
+  }).then(doc => {
     if (!doc) {
       return Promise.reject(
         `${model.modelName.toLowerCase()} with ${slug}=${value} not found.`
@@ -11,22 +16,31 @@ function validateReference(model, value, slug='_id') {
   });
 }
 
-function isReference(ref, slug='_id') {
-  return (value, { req, path, local }) => {
-    let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
-    let promises = Array.isArray(value) ?
-      value.map(v => validateReference(model, v, slug)) :
-      [validateReference(model, value, slug)]; 
+function isRelated(ref, slug='id', options) {
+  return (value, session) => {
+    let model = getModel(ref);
+    
+    // Nested query
+    let query = options !== undefined && options(value, session);
 
+    // Create promises
+    let promises = Array.isArray(value) 
+      ? value.map(v => validateRelated(model, v, slug, query))
+      : [validateRelated(model, value, slug, query)]; 
+
+    // Execute
     return Promise.all(promises);
   };
 }
 
-function isUnique(ref, slug) {
-  return (value, { req, path, local }) => {
-    let model = typeof ref === 'string' ? mongoose.model(ref) : ref;
-
-    return model.findOne({ [slug]: value}).then(doc => {
+function isUnique(ref, slug, options) {
+  return (value, session) => {
+    let model = getModel(ref);
+    let query = options !== undefined ? options(value, session) : {};
+    return model.findOne({ 
+      [slug]: value, 
+      ...query 
+    }).then(doc => {
       if (doc) {
         return Promise.reject('This field must be unique.');
       }
@@ -35,7 +49,7 @@ function isUnique(ref, slug) {
 }
 
 function isDate(formats=['YYYY-MM-DD']) {
-  return (value, { req, path, local }) => {
+  return (value) => {
     if (!moment(value, formats, true).isValid()) {
       throw new Error(
         `Date has wrong format. Use one of these formats instead: ${formats.join(', ')}`
@@ -46,4 +60,4 @@ function isDate(formats=['YYYY-MM-DD']) {
   };
 }
 
-module.exports = { isReference, isUnique, isDate };
+module.exports = { isRelated, isUnique, isDate };

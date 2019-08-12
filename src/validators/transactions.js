@@ -2,7 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
-const { isReference, isDate } = require('./custom');
+const { isRelated, isDate } = require('./custom');
 
 module.exports = checkSchema({
   description: {
@@ -49,7 +49,9 @@ module.exports = checkSchema({
       errorMessage: 'This field should be an array.',
     },
     custom: {
-      options: isReference(Tag)
+      options: isRelated(Tag, 'id', (value, { req }) => { 
+        return { user: req.user };
+      })
     }
   }
 });
