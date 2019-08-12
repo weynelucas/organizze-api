@@ -8,7 +8,9 @@ class TagController extends BaseController {
 
   performSave(req, object) {
     const { description } = req.body;
-    object.set({ user: req.user, description });
+    if (description !== undefined) {
+      object.set({ user: req.user, description });
+    }
     return object.save();
   }
 
@@ -20,10 +22,7 @@ class TagController extends BaseController {
     const filters = {};
 
     if (search) {
-      filters.$text = {
-        $search: search,
-        $caseSensitive: false,
-      };
+      filters.description = new RegExp(`${search}`);
     }
 
     return documents.find(filters).select('-user');

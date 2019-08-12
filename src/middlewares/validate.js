@@ -3,7 +3,9 @@ const { validationResult, check } = require('express-validator');
 
 function isInRequest(req, locations, path) {
   return locations.some(local => {
-    return Object.keys(req[local]).includes(path);
+    return req[local] !== undefined 
+      ? Object.keys(req[local]).includes(path) 
+      : false;
   });
 }
 
