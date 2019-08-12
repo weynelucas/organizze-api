@@ -1,8 +1,8 @@
 const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
-const { isUnique } = require('./custom');
 
 const Tag = model('Tag');
+const { isUnique } = require('./custom');
 
 module.exports = checkSchema({
   description: {
@@ -12,22 +12,15 @@ module.exports = checkSchema({
       errorMessage: 'This cannot be blank.'
     },
     custom: {
-      options: (value, { req, path, local }) => {
-        let criteria = {
-          description: value,
-          user: req.user._id,
-        };
+      options: isUnique(Tag, 'description', (value, { req }) => {
+        let query = { user: req.user._id };
 
-        if (req.tag !== undefined) {
-          criteria._id = { $ne: req.tag._id };
-        } 
+        if (req.object !== undefined) {
+          query._id = { $ne: req.object._id };
+        }
 
-        return Tag.countDocuments(criteria).then(count => {
-          if (count) {
-            return Promise.reject('This field must be unique.');
-          }
-        });
-      }
+        return query;
+      })
     }
   }
 });

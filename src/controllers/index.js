@@ -97,7 +97,8 @@ class BaseController {
    */
   async loadObject(req, res, next) {
     try {
-      req[this.requestProperty] = this.getObject(req);
+      // eslint-disable-next-line require-atomic-updates
+      req[this.requestProperty] = await this.getObject(req);
       return next();
     } catch (err) {
       next(err);
