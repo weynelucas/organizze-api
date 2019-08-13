@@ -2,6 +2,7 @@ const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
 
+const { filterKeys } = require('../Util/Object');
 const { NotFoundError } = require('../errors/api');
 
 class BaseController {
@@ -164,30 +165,12 @@ class BaseController {
 
   getActionSchema() {
     return {
-      list: {
-        detail: false,
-        method: 'get',
-      },
-      create: {
-        detail: false,
-        method: 'post',
-      },
-      retrieve: {
-        detail: true,
-        method: 'get'
-      },
-      update: {
-        detail: true,
-        methods: 'put'
-      },
-      partialUpdate: {
-        detail: true,
-        methods: 'patch'
-      },
-      destroy: {
-        detail: false,
-        methods: 'delete',
-      },
+      list: { detail: false, method: 'get' },
+      create: { detail: false, method: 'post' },
+      retrieve: { detail: true, method: 'get' },
+      update: { detail: true, method: 'put' },
+      partialUpdate: { detail: true, method: 'patch' },
+      destroy: { detail: false, method: 'delete' },
     }
   }
   
@@ -196,17 +179,38 @@ class BaseController {
    * controller based on their actions
    * @return {express.Router} The router instance with all routes registered
    */
-  getRouter() {
+  Router({ only=[], except=[], middleware, validator }={}) {
     const router = express.Router();
+    const schema = filterKeys(this.getActionSchema(), only, except);
     
-    // Register object load middleware
+    // Param intercept for load object
     router.param(this.lookupFieldParam, this.loadObject);
 
-    // Register actions
-    Object.entries(this.getActionSchema).map(([action, { detail, method }]) => {
-      let path = !detail ? '/' : `/:${this.lookupFieldParam}`
-      
-      router[method](path, this[action]);
+    // Registering middleware for all actions
+    if (!middleware instanceof Map) {
+      router.use('/', middleware);
+    }
+
+    // Registering validator for all actions
+    if (!validator instanceof Map) {
+      router.use('/', validator);
+    }
+
+    // Registering actions based on schema
+    Object.entries(schema).map(([action, { detail, method }]) => {
+      let path = !detail ? '/' : `/:${this.lookupFieldParam}`;
+      let stack = []
+
+      if (middleware instanceof Map && middleware.has(action)) {
+        stack.push(middleware.get(action))
+      }
+
+      if (validator instanceof Map && validator.has(action)) {
+        stack.push(validator.get(action))
+      }
+
+      stack.push(this[action]);
+      router[method](path, stack);
     });
     
     return router;
