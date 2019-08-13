@@ -34,6 +34,7 @@ class BaseController {
    * You may want to override this if you need to provide different
    * documents depending on the incoming request.
    * @param {express.Request} req The incoming request object
+   * @return {mongoose.DocumentQuery} The list of documents
    */
   getDocuments(req) {
     return this.model.find();
@@ -73,7 +74,7 @@ class BaseController {
    * You may want to override this if you need to provide a different
    * filter depending on the incoming request.
    * @param {express.Request} req The incoming request object
-   * @param {Object} documents The documents (query) to filter
+   * @param {mongoose.DocumentQuery} documents The documents (query) to filter
    */
   filterDocuments(req, documents) {
     return documents;
@@ -173,9 +174,6 @@ class BaseController {
     return ['retrieve', 'update', 'destroy'];
   }
 
-  /**
-   * Get the map between the controller actions and http methods
-   */
   getActionMap() {
     return {
       'get': 'list',
@@ -195,7 +193,7 @@ class BaseController {
   /**
    * Get the complete middleware and routing system for the
    * controller based on their actions
-   * @return {express.Router} router instance with all routes registered
+   * @return {express.Router} The router instance with all routes registered
    */
   getRouter() {
     const router = express.Router();
