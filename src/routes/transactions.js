@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
-const validate = require('../middlewares/validate');
+const validate = require('../Middleware/validate');
 const validateTransaction = require('../validators/transactions');
-const TransactionController = require('../controllers/transaction');
+const TransactionController = require('../Controller/transaction');
 
 const controller = new TransactionController();
 const validator = validate(validateTransaction);

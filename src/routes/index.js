@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { isAuthenticated } = require('../middlewares/auth');
+const { isAuthenticated } = require('../Middleware/auth');
 const { APIError } = require('../errors/api');
 
 

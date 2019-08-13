@@ -56,4 +56,4 @@ TransactionSchema.methods.toJSON = function () {
   };
 };
 
-model('Transaction', TransactionSchema);
+module.exports = model('Transaction', TransactionSchema);
