@@ -2,9 +2,10 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
-const { isRelated, isDate } = require('./custom');
+const { isRelated, isDate } = require('./helpers');
+const validate = require('../Middleware/validate');
 
-module.exports = checkSchema({
+const schema = checkSchema({
   description: {
     in: ['body'],
     exists: { errorMessage: 'This field is required.' },
@@ -55,3 +56,8 @@ module.exports = checkSchema({
     }
   }
 });
+
+module.exports = {
+  StoreTransaction: validate(schema),
+  UpdateTransaction: validate(schema, true)
+}

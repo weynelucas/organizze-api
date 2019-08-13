@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const validate = require('../Middleware/validate');
-const validateTag = require('../validators/tags');
+const validateTag = require('../Validator/Tag');
 const TagController = require('../Controller/TagController');
 
 const controller = new TagController();

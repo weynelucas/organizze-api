@@ -2,10 +2,11 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const User = model('User');
-const { isUnique } = require('./custom');
+const { isUnique } = require('./helpers');
+const validate = require('../Middleware/validate');
 
 
-const login = checkSchema({
+const loginSchema = checkSchema({
   email: {
     in: ['body'],
     isEmpty: { 
@@ -22,7 +23,7 @@ const login = checkSchema({
   }
 });
 
-const signup = checkSchema({
+const storeSchema = checkSchema({
   email: {
     in: ['body'],
     isEmpty: { 
@@ -66,4 +67,7 @@ const signup = checkSchema({
 });
 
 
-module.exports = { login, signup };
+module.exports = { 
+  StoreLogin: validate(loginSchema) ,
+  StoreUser: validate(storeSchema)
+};
