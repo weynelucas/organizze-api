@@ -147,6 +147,10 @@ class BaseController {
     }
   }
 
+  async partialUpdate(req, res, next) {
+    return await this.update(req, res, next);
+  }
+
   async destroy(req, res, next) {
     try {
       const object = await this.getObject(req);
@@ -158,36 +162,33 @@ class BaseController {
     }
   }
 
-  /**
-   * Return the list of controller methods that can be used
-   * to handle requests on routes
-   */
-  getActions() {
-    return ['list', 'create', 'retrieve', 'update', 'destroy'];
-  }
-
-  /**
-   * Return the list of controller methods that can be used
-   * to handle requests for a specific resource
-   */
-  getDetailActions() {
-    return ['retrieve', 'update', 'destroy'];
-  }
-
-  getActionMap() {
+  getActionSchema() {
     return {
-      'get': 'list',
-      'post': 'create',
-    };
-  }
-
-  getDetailActionMap() {
-    return {
-      'get': 'retrieve',
-      'put': 'update',
-      'patch': 'update',
-      'delete': 'destroy',
-    };
+      list: {
+        detail: false,
+        method: 'get',
+      },
+      create: {
+        detail: false,
+        method: 'post',
+      },
+      retrieve: {
+        detail: true,
+        method: 'get'
+      },
+      update: {
+        detail: true,
+        methods: 'put'
+      },
+      partialUpdate: {
+        detail: true,
+        methods: 'patch'
+      },
+      destroy: {
+        detail: false,
+        methods: 'delete',
+      },
+    }
   }
   
   /**
@@ -197,13 +198,15 @@ class BaseController {
    */
   getRouter() {
     const router = express.Router();
-    const detailActions = this.getDetailActions();
-    const listActions = this.getActions()
-      .filter(action => !detailActions.includes(action));
+    
+    // Register object load middleware
+    router.param(this.lookupFieldParam, this.loadObject);
 
-    // Register list actions
-    Object.entries(this.getActionMap()).map(([method, action]) => {
-      router[method]('/', this[action]);
+    // Register actions
+    Object.entries(this.getActionSchema).map(([action, { detail, method }]) => {
+      let path = !detail ? '/' : `/:${this.lookupFieldParam}`
+      
+      router[method](path, this[action]);
     });
     
     return router;
