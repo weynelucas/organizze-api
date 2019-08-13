@@ -1,17 +1,14 @@
 // Dependencies (3rd-party)
+const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
-const requireDir = require('require-dir');
-const cors = require('cors');
 const morgan = require('morgan');
-
-
-// Dependencies (local)
-const settings = require('./config');
+const requireDir = require('require-dir');
 
 
 // Global app object
 const app = express();
+const server = require('http').createServer(app);
 
 
 // Database config
@@ -19,7 +16,7 @@ mongoose.connect(
   'mongodb://localhost:27017/organizzeapi',
   { useNewUrlParser: true, useCreateIndex: true }
 );
-requireDir('./models');
+requireDir('./app/Models');
 
 
 // Middlewares
@@ -29,11 +26,11 @@ app.use(morgan('combined'));
 
 
 // Routes
-app.use('/', require('./routes'));
+app.use('/', require('./app/routes'));
 
 
 // Starting server
-const server = app.listen(settings.port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Listening on port ${server.address().port}`);
+server.listen(3100, '127.0.0.1', () => {
+  const url = `http://${server.address().address}:${server.address().port}`;
+  console.log(`Starting development server at ${url}`);
 });

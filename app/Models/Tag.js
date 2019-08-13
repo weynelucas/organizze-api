@@ -24,4 +24,4 @@ TagSchema.methods.toJSON = function () {
   };
 };
 
-model('Tag', TagSchema);
+module.exports = model('Tag', TagSchema);

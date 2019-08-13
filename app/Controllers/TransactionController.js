@@ -1,4 +1,4 @@
-const BaseController = require('./index');
+const BaseController = require('./BaseController');
 
 
 class TransactionController extends BaseController {

@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { Schema, model }= require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-const settings = require('../config');
+const settings = require('../../config');
 
 const UserSchema = new Schema({
   name: String,

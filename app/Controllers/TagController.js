@@ -1,4 +1,4 @@
-const BaseController = require('./index');
+const BaseController = require('./BaseController');
 
 
 class TagController extends BaseController {

@@ -1,12 +1,14 @@
+const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
 
-const { NotFoundError } = require('../errors/api');
+const { filterKeys } = require('../Utils/Object');
+const { NotFoundError } = require('../Utils/Http');
 
 class BaseController {
 
   /**
-   * @param {Model} model The default model object for the controller.
+   * @param {mongoose.Model|string} model The default model object for the controller.
    * @param {string} lookupField The field name for object lookup.
    * @param {string} lookupFieldParam The request param name used for object lookup . 
    * @param {string} requestProperty The request property name where object will be stored. 
@@ -32,7 +34,8 @@ class BaseController {
    * 
    * You may want to override this if you need to provide different
    * documents depending on the incoming request.
-   * @param {Object} req The incoming request object
+   * @param {express.Request} req The incoming request object
+   * @return {mongoose.DocumentQuery} The list of documents
    */
   getDocuments(req) {
     return this.model.find();
@@ -43,7 +46,7 @@ class BaseController {
    * 
    * You may want to override this if you need to provide a non-standart
    * object lookup depending on the incoming request.
-   * @param {Object} req The incoming request object
+   * @param {express.Request} req The incoming request object
    */
   async getObject(req) {
     // Get object from request
@@ -71,8 +74,8 @@ class BaseController {
    * 
    * You may want to override this if you need to provide a different
    * filter depending on the incoming request.
-   * @param {Object} req The incoming request object
-   * @param {Object} documents The documents (query) to filter
+   * @param {express.Request} req The incoming request object
+   * @param {mongoose.DocumentQuery} documents The documents (query) to filter
    */
   filterDocuments(req, documents) {
     return documents;
@@ -80,8 +83,8 @@ class BaseController {
 
   /**
    * Saves a model instance.
-   * @param {Object} req The incoming request object
-   * @param {Object} object The instance of the model to save
+   * @param {express.Request} req The incoming request object
+   * @param {mongoose.Document} object The instance of the model to save
    */
   performSave(req, object) {
     object.set(req.body);
@@ -91,9 +94,9 @@ class BaseController {
   /**
    * Handler to load object and store it into the
    * incoming request object
-   * @param {Object} req The incoming request object
-   * @param {Object} res The response object
-   * @param {Object} next The next middleware on stack
+   * @param {express.Request} req The incoming request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
    */
   async loadObject(req, res, next) {
     try {
@@ -145,7 +148,11 @@ class BaseController {
     }
   }
 
-  async delete(req, res, next) {
+  async partialUpdate(req, res, next) {
+    return await this.update(req, res, next);
+  }
+
+  async destroy(req, res, next) {
     try {
       const object = await this.getObject(req);
       await object.remove();
@@ -154,6 +161,59 @@ class BaseController {
     } catch(err) {
       return next(err);
     }
+  }
+
+  getActionSchema() {
+    return {
+      list: { detail: false, method: 'get' },
+      create: { detail: false, method: 'post' },
+      retrieve: { detail: true, method: 'get' },
+      update: { detail: true, method: 'put' },
+      partialUpdate: { detail: true, method: 'patch' },
+      destroy: { detail: false, method: 'delete' },
+    }
+  }
+  
+  /**
+   * Get the complete middleware and routing system for the
+   * controller based on their actions
+   * @return {express.Router} The router instance with all routes registered
+   */
+  Router({ only=[], except=[], middleware, validator }={}) {
+    const router = express.Router();
+    const schema = filterKeys(this.getActionSchema(), only, except);
+    
+    // Param intercept for load object
+    router.param(this.lookupFieldParam, this.loadObject);
+
+    // Registering middleware for all actions
+    if (!(middleware === undefined || middleware instanceof Map)) {
+      router.use('/', middleware);
+    }
+
+    // Registering validator for all actions
+    if (!(validator === undefined || validator instanceof Map)) {
+      router.use('/', validator);
+    }
+
+    // Registering actions based on schema
+    Object.entries(schema).map(([action, { detail, method }]) => {
+      let path = !detail ? '/' : `/:${this.lookupFieldParam}`;
+      let stack = []
+
+      if (middleware instanceof Map && middleware.has(action)) {
+        stack.push(middleware.get(action))
+      }
+
+      if (validator instanceof Map && validator.has(action)) {
+        stack.push(validator.get(action))
+      }
+
+      stack.push(this[action]);
+      router[method](path, stack);
+    });
+    
+    return router;
   }
 }
 
