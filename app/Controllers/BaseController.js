@@ -171,7 +171,7 @@ class BaseController {
       update: { detail: true, method: 'put' },
       partialUpdate: { detail: true, method: 'patch' },
       destroy: { detail: false, method: 'delete' },
-    }
+    };
   }
   
   /**
@@ -199,14 +199,14 @@ class BaseController {
     // Registering actions based on schema
     Object.entries(schema).map(([action, { detail, method }]) => {
       let path = !detail ? '/' : `/:${this.lookupFieldParam}`;
-      let stack = []
+      let stack = [];
 
       if (middleware instanceof Map && middleware.has(action)) {
-        stack.push(middleware.get(action))
+        stack.push(middleware.get(action));
       }
 
       if (validator instanceof Map && validator.has(action)) {
-        stack.push(validator.get(action))
+        stack.push(validator.get(action));
       }
 
       stack.push(this[action]);
