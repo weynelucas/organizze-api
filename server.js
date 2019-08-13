@@ -16,7 +16,7 @@ mongoose.connect(
   'mongodb://localhost:27017/organizzeapi',
   { useNewUrlParser: true, useCreateIndex: true }
 );
-requireDir('./src/Model');
+requireDir('./app/Model');
 
 
 // Middlewares
@@ -26,7 +26,7 @@ app.use(morgan('combined'));
 
 
 // Routes
-app.use('/', require('./src/routes'));
+app.use('/', require('./app/routes'));
 
 
 // Starting server
