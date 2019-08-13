@@ -2,7 +2,7 @@ const jwt = require('express-jwt');
 const moogose = require('mongoose');
 
 const User = moogose.model('User');
-const settings = require('../config');
+const settings = require('../../config');
 const { AuthenticationFailedError } = require('../Utils/Http');
 
 
