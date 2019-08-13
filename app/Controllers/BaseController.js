@@ -187,12 +187,12 @@ class BaseController {
     router.param(this.lookupFieldParam, this.loadObject);
 
     // Registering middleware for all actions
-    if (!middleware instanceof Map) {
+    if (!(middleware === undefined || middleware instanceof Map)) {
       router.use('/', middleware);
     }
 
     // Registering validator for all actions
-    if (!validator instanceof Map) {
+    if (!(validator === undefined || validator instanceof Map)) {
       router.use('/', validator);
     }
 
