@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
-const { isAuthenticated } = require('../Middleware/auth');
-const validate = require('../Middleware/validate');
-const validators = require('../Validator/User');
-const UserController = require('../Controller/UserController');
+const { isAuthenticated } = require('../Middlewares/auth');
+const validate = require('../Middlewares/validate');
+const validators = require('../Validators/User');
+const UserController = require('../Controllers/UserController');
 
 router.post('/login', validate(validators.login), UserController.login);
 router.post('/signup', validate(validators.signup), UserController.signup);

@@ -2,7 +2,7 @@ const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
 
-const { filterKeys } = require('../Util/Object');
+const { filterKeys } = require('../Utils/Object');
 const { NotFoundError } = require('../errors/api');
 
 class BaseController {

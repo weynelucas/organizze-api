@@ -3,7 +3,7 @@ const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
 const { isUnique } = require('./helpers');
-const  validate = require('../Middleware/validate');
+const  validate = require('../Middlewares/validate');
 
 const schema = checkSchema({
   description: {

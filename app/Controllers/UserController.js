@@ -1,7 +1,7 @@
 const { model } = require('mongoose');
 
 const User = model('User');
-const auth = require('../services/auth');
+const auth = require('../Services/auth');
 const { AuthenticationFailedError } = require('../errors/api');
 
 module.exports = {

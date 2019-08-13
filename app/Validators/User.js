@@ -3,7 +3,7 @@ const { checkSchema } = require('express-validator');
 
 const User = model('User');
 const { isUnique } = require('./helpers');
-const validate = require('../Middleware/validate');
+const validate = require('../Middlewares/validate');
 
 
 const loginSchema = checkSchema({

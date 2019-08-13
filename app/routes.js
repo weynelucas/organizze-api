@@ -1,16 +1,16 @@
 const router = require('express').Router();
 
-const AuthMiddleware = require('./Middleware/auth');
+const AuthMiddleware = require('./Middlewares/auth');
 
 // Controllers
-const UserController = require('./Controller/UserController');
-const TagController = require('./Controller/TagController');
-const TransactionController = require('./Controller/TransactionController');
+const UserController = require('./Controllers/UserController');
+const TagController = require('./Controllers/TagController');
+const TransactionController = require('./Controllers/TransactionController');
 
 // Validators
-const { StoreUser, StoreLogin } = require('./Validator/User');
-const { StoreTransaction, UpdateTransaction } = require('./Validator/Transaction');
-const { StoreTag, UpdateTag } = require('./Validator/Tag');
+const { StoreUser, StoreLogin } = require('./Validators/User');
+const { StoreTransaction, UpdateTransaction } = require('./Validators/Transaction');
+const { StoreTag, UpdateTag } = require('./Validators/Tag');
 
 const loginRequired = AuthMiddleware.isAuthenticated();
 
