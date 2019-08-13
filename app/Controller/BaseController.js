@@ -1,3 +1,4 @@
+const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
 
@@ -6,7 +7,7 @@ const { NotFoundError } = require('../errors/api');
 class BaseController {
 
   /**
-   * @param {Model} model The default model object for the controller.
+   * @param {mongoose.Model|string} model The default model object for the controller.
    * @param {string} lookupField The field name for object lookup.
    * @param {string} lookupFieldParam The request param name used for object lookup . 
    * @param {string} requestProperty The request property name where object will be stored. 
@@ -32,7 +33,7 @@ class BaseController {
    * 
    * You may want to override this if you need to provide different
    * documents depending on the incoming request.
-   * @param {Object} req The incoming request object
+   * @param {express.Request} req The incoming request object
    */
   getDocuments(req) {
     return this.model.find();
@@ -43,7 +44,7 @@ class BaseController {
    * 
    * You may want to override this if you need to provide a non-standart
    * object lookup depending on the incoming request.
-   * @param {Object} req The incoming request object
+   * @param {express.Request} req The incoming request object
    */
   async getObject(req) {
     // Get object from request
@@ -71,7 +72,7 @@ class BaseController {
    * 
    * You may want to override this if you need to provide a different
    * filter depending on the incoming request.
-   * @param {Object} req The incoming request object
+   * @param {express.Request} req The incoming request object
    * @param {Object} documents The documents (query) to filter
    */
   filterDocuments(req, documents) {
@@ -80,8 +81,8 @@ class BaseController {
 
   /**
    * Saves a model instance.
-   * @param {Object} req The incoming request object
-   * @param {Object} object The instance of the model to save
+   * @param {express.Request} req The incoming request object
+   * @param {mongoose.Document} object The instance of the model to save
    */
   performSave(req, object) {
     object.set(req.body);
@@ -91,9 +92,9 @@ class BaseController {
   /**
    * Handler to load object and store it into the
    * incoming request object
-   * @param {Object} req The incoming request object
-   * @param {Object} res The response object
-   * @param {Object} next The next middleware on stack
+   * @param {express.Request} req The incoming request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
    */
   async loadObject(req, res, next) {
     try {
@@ -145,7 +146,7 @@ class BaseController {
     }
   }
 
-  async delete(req, res, next) {
+  async destroy(req, res, next) {
     try {
       const object = await this.getObject(req);
       await object.remove();
@@ -154,6 +155,60 @@ class BaseController {
     } catch(err) {
       return next(err);
     }
+  }
+
+  /**
+   * Return the list of controller methods that can be used
+   * to handle requests on routes
+   */
+  getActions() {
+    return ['list', 'create', 'retrieve', 'update', 'destroy'];
+  }
+
+  /**
+   * Return the list of controller methods that can be used
+   * to handle requests for a specific resource
+   */
+  getDetailActions() {
+    return ['retrieve', 'update', 'destroy'];
+  }
+
+  /**
+   * Get the map between the controller actions and http methods
+   */
+  getActionMap() {
+    return {
+      'get': 'list',
+      'post': 'create',
+    };
+  }
+
+  getDetailActionMap() {
+    return {
+      'get': 'retrieve',
+      'put': 'update',
+      'patch': 'update',
+      'delete': 'destroy',
+    };
+  }
+  
+  /**
+   * Get the complete middleware and routing system for the
+   * controller based on their actions
+   * @return {express.Router} router instance with all routes registered
+   */
+  getRouter() {
+    const router = express.Router();
+    const detailActions = this.getDetailActions();
+    const listActions = this.getActions()
+      .filter(action => !detailActions.includes(action));
+
+    // Register list actions
+    Object.entries(this.getActionMap()).map(([method, action]) => {
+      router[method]('/', this[action]);
+    });
+    
+    return router;
   }
 }
 
