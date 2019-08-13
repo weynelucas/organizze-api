@@ -2,7 +2,7 @@ const { model } = require('mongoose');
 
 const User = model('User');
 const auth = require('../Services/Auth');
-const { AuthenticationFailedError } = require('../errors/api');
+const { AuthenticationFailedError } = require('../Utils/Http');
 
 module.exports = {
   async login(req, res, next) {

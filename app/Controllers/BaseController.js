@@ -3,7 +3,7 @@ const autobind = require('auto-bind');
 const mongoose = require('mongoose');
 
 const { filterKeys } = require('../Utils/Object');
-const { NotFoundError } = require('../errors/api');
+const { NotFoundError } = require('../Utils/Http');
 
 class BaseController {
 

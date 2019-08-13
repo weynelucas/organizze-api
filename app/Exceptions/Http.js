@@ -1,4 +1,4 @@
-const { APIError } = require('../errors/api');
+const { APIError } = require('../Utils/Http');
 
 function HttpExceptionHandler(err, req, res, next) {
   if (err instanceof APIError) {

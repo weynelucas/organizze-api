@@ -3,7 +3,7 @@ const moogose = require('mongoose');
 
 const User = moogose.model('User');
 const settings = require('../config');
-const { AuthenticationFailedError } = require('../errors/api');
+const { AuthenticationFailedError } = require('../Utils/Http');
 
 
 function getUserFromPayload(requestProperty='user', raiseException=true) {
