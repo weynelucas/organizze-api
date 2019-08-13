@@ -48,6 +48,7 @@ TransactionSchema.methods.toJSON = function () {
     activityType: this.activityType,
     description: this.description,
     date: this.date,
+    ammount: this.ammount,
     done: this.done,
     observation: this.observation,
     tags: this.tags,
