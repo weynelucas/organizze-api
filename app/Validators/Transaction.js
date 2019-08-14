@@ -2,6 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
+const Category = model('Category');
 const { isRelated, isDate } = require('./helpers');
 const validate = require('../Middlewares/Validate');
 
@@ -51,6 +52,18 @@ const schema = checkSchema({
     },
     custom: {
       options: isRelated(Tag, '_id', (value, { req }) => { 
+        return { user: req.user._id };
+      })
+    }
+  },
+  category: {
+    in: ['body'],
+    optional: true,
+    isUUID: {
+      errorMessage: 'This field should be an UUID.'
+    },
+    custom: {
+      options: isRelated(Category, '_id', (value, { req }) => { 
         return { user: req.user._id };
       })
     }
