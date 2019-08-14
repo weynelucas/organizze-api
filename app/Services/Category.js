@@ -6,7 +6,7 @@ module.exports = {
     return Category.find({
       $or: [
         { parent: { $exists: false  }},
-        { parent: { $ne: null }}
+        { parent: { $eq: null }}
       ]
     });
   },

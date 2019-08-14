@@ -9,11 +9,10 @@ class CategoryController extends BaseController {
   async createSubcategory(req, res, next) {
     try {
       const category = await this.getObject(req);
-      let subcategory = await this.performSave(
+      const subcategory = await this.performSave(
         req, this.model({ parent: category })
       );
       
-      subcategory = await this.model.populate(subcategory, { path: 'parent' });
       return res.status(201).json(subcategory.toJSON());
     } catch (err) {
       next(err);
