@@ -12,10 +12,17 @@ module.exports = {
     });
   },
 
-  async destroyCategory(category, target) {
-    await category.delete();
-    await Transaction.updateMany({ category }, {
-      $set: { category: target }
+  async destroyCategory(category, substitute) {
+    const conditions = {
+      $or: [
+        { category },
+        { category: { $in: category.subcategories } }
+      ]
+    };
+    
+    await Category.deleteMany(conditions);
+    await Transaction.updateMany(conditions, {
+      $set: { category: substitute }
     });
   }
   

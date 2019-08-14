@@ -19,6 +19,19 @@ class CategoryController extends BaseController {
     }
   }
 
+  async destroy(req, res, next) {
+    try {
+      const category = this.getObject(req);
+      const { substitute } = req.query;
+
+      await CategoryService.destroyCategory(category, substitute);
+
+      return res.status(204).json();
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   performSave(req, object) {
     const { description } = req.body;
     if (description !== undefined) {
