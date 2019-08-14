@@ -166,12 +166,30 @@ class BaseController {
 
   getActionSchema() {
     return {
-      list: { detail: false, method: 'get' },
-      create: { detail: false, method: 'post' },
-      retrieve: { detail: true, method: 'get' },
-      update: { detail: true, method: 'put' },
-      partialUpdate: { detail: true, method: 'patch' },
-      destroy: { detail: false, method: 'delete' },
+      list: {
+        detail: false,
+        method: 'get'
+      },
+      create: {
+        detail: false, 
+        method: 'post'
+      },
+      retrieve: { 
+        detail: true, 
+        method: 'get' 
+      },
+      update: { 
+        detail: true, 
+        method: 'put' 
+      },
+      partialUpdate: { 
+        detail: true, 
+        method: 'patch' 
+      },
+      destroy: { 
+        detail: true, 
+        method: 'delete' 
+      },
     };
   }
   

@@ -59,8 +59,8 @@ const schema = checkSchema({
   category: {
     in: ['body'],
     optional: true,
-    isUUID: {
-      errorMessage: 'This field should be an UUID.'
+    isMongoId: {
+      errorMessage: 'This field must be a valid identifier.'
     },
     custom: {
       options: isRelated(Category, '_id', (value, { req }) => { 

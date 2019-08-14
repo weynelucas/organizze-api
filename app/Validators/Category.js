@@ -30,8 +30,8 @@ const destroy = checkSchema({
   substitute: {
     in: ['query'],
     exists: { errorMessage: 'This field is required.' },
-    isUUID: {
-      errorMessage: 'This field must be an UUID.'
+    isMongoId: {
+      errorMessage: 'This field must be an valid identifier.'
     },
     custom: {
       options: isRelated(Category, '_id', (value, { req }) => {

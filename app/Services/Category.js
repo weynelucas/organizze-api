@@ -15,8 +15,8 @@ module.exports = {
   async destroyCategory(category, substitute) {
     const conditions = {
       $or: [
-        { category },
-        { category: { $in: category.subcategories } }
+        { _id: category._id },
+        { parent: category._id }
       ]
     };
     

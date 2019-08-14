@@ -55,6 +55,7 @@ TransactionSchema.methods.toJSON = function () {
     ammount: this.ammount,
     done: this.done,
     observation: this.observation,
+    category: this.category,
     tags: this.tags,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,

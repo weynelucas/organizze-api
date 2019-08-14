@@ -21,7 +21,7 @@ class CategoryController extends BaseController {
 
   async destroy(req, res, next) {
     try {
-      const category = this.getObject(req);
+      const category = await this.getObject(req);
       const { substitute } = req.query;
 
       await CategoryService.destroyCategory(category, substitute);
