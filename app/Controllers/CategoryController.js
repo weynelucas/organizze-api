@@ -6,6 +6,20 @@ class CategoryController extends BaseController {
     super('Category');
   }
 
+  async createSubcategory(req, res, next) {
+    try {
+      const category = await this.getObject(req);
+      let subcategory = await this.performSave(
+        req, this.model({ parent: category })
+      );
+      
+      subcategory = await this.model.populate(subcategory, { path: 'parent' });
+      return res.status(201).json(subcategory.toJSON());
+    } catch (err) {
+      next(err);
+    }
+  }
+
   performSave(req, object) {
     const { description } = req.body;
     if (description !== undefined) {
@@ -17,7 +31,29 @@ class CategoryController extends BaseController {
   getDocuments({ user: { id: userId } }) {
     return CategoryService
       .listCategories()
-      .find({ user: userId });
+      .find({ user: userId })
+      .populate('subcategories');
+  }
+
+  filterDocuments({ query: { search } }, documents) {
+    const filters = {};
+
+    if (search) {
+      filters.description = new RegExp(`${search}`);
+    }
+
+    return documents.find(filters);
+  }
+
+  getActionSchema() {
+    return {
+      ...super.getActionSchema(),
+      createSubcategory: {
+        detail: true,
+        method: 'post',
+        urlPath: 'subcategories',
+      }
+    };
   }
 }
 

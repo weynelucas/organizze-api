@@ -1,6 +1,7 @@
 const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
+const urlJoin = require('proper-url-join');
 
 const { filterKeys } = require('../Utils/Object');
 const { NotFoundError } = require('../Utils/Http');
@@ -197,8 +198,12 @@ class BaseController {
     }
 
     // Registering actions based on schema
-    Object.entries(schema).map(([action, { detail, method }]) => {
-      let path = !detail ? '/' : `/:${this.lookupFieldParam}`;
+    Object.entries(schema).map(([action, { detail, method, urlPath }]) => {
+      let path = urlJoin(...[
+        !detail && urlPath,
+        detail && `:${this.lookupFieldParam}`,
+        detail && urlPath
+      ]);
       let stack = [];
 
       if (middleware instanceof Map && middleware.has(action)) {

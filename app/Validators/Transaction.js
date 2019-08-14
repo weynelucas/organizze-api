@@ -60,4 +60,4 @@ const schema = checkSchema({
 module.exports = {
   StoreTransaction: validate(schema),
   UpdateTransaction: validate(schema, true)
-}
+};
