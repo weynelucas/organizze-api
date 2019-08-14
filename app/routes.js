@@ -5,6 +5,7 @@ const AuthMiddleware = require('./Middlewares/Auth');
 // Controllers
 const UserController = require('./Controllers/UserController');
 const TagController = require('./Controllers/TagController');
+const CategoryController = require('./Controllers/CategoryController');
 const TransactionController = require('./Controllers/TransactionController');
 
 // Validators
@@ -32,6 +33,11 @@ router.use('/transactions', new TransactionController().Router({
     ['update', StoreTransaction],
     ['partialUpdate', UpdateTransaction],
   ])
+}));
+
+// Category
+router.use('/categories', new CategoryController().Router({
+  middleware: loginRequired,
 }));
 
 // Tag

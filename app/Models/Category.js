@@ -11,11 +11,17 @@ const CategorySchema = new Schema({
     required: true,
     type: Schema.Types.ObjectId,
   },
-  subcategories: [{
+  parent: {
     ref: 'Category',
     type: Schema.Types.ObjectId,
-  }]
+  }
 }, { timestamps: true });
+
+CategorySchema.virtual('subcategories', {
+  ref: 'Category',
+  localField: '_id',
+  foreignField: 'parent'
+});
 
 CategorySchema.methods.toJSON = function () {
   return {
