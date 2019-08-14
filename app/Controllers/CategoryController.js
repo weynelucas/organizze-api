@@ -14,7 +14,7 @@ class CategoryController extends BaseController {
     return object.save();
   }
 
-  getDocuments({ user: { is: userId } }) {
+  getDocuments({ user: { id: userId } }) {
     return CategoryService
       .listCategories()
       .find({ user: userId });
