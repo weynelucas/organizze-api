@@ -34,6 +34,10 @@ const TransactionSchema = new Schema({
     default: true
   },
   observation: String,
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+  },
   tags: [{ 
     type: Schema.Types.ObjectId, 
     ref: 'Tag' 
