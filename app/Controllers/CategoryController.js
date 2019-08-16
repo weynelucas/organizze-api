@@ -55,7 +55,7 @@ class CategoryController extends BaseController {
     const filters = {};
 
     if (search) {
-      filters.description = new RegExp(`${search}`, 'i');
+      filters.description = new RegExp(search, 'i');
     }
 
     return documents.find(filters);
