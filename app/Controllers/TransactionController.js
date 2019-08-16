@@ -20,7 +20,13 @@ class TransactionController extends BaseController {
   }
 
   filterDocuments(req, documents) {
-    const { search, done, activityType, startDate, endDate } = req.query;
+    const { 
+      search, 
+      done, 
+      activityType, 
+      category, tag,
+      startDate, endDate 
+    } = req.query;
 
     const filters = {};
   
@@ -49,6 +55,24 @@ class TransactionController extends BaseController {
       if (endDate) {
         filters.date.$lte = new Date(endDate);
       }
+    }
+
+    if (tag) {
+      let match = Array.isArray(tag) 
+        ? { $in: [...tag] }
+        : { $eq: tag };
+
+      filters.tags = { 
+        $elemMatch: match
+      };
+    }
+
+    if (category) {
+      let match = Array.isArray(category) 
+        ? { $in: [...category] }
+        : { $eq: category };
+
+      filters.category = match;
     }
 
     return documents

@@ -176,7 +176,7 @@ class BaseController {
   }
 
   /**
-   * Update (partially) a model instance
+   * Update (partially) a model instance  
    * @param {express.Request} req The request object
    * @param {express.Response} res The response object
    * @param {express.NextFunction} next The next middleware on stack
