@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const urlJoin = require('proper-url-join');
 
 const { filterKeys } = require('../Utils/Object');
-const { NotFoundError } = require('../Utils/Http');
+const { Status, NotFoundError } = require('../Utils/Http');
 
 class BaseController {
 
@@ -132,7 +132,9 @@ class BaseController {
       var object = this.model();
   
       object = await this.performSave(req, object);
-      return res.status(201).json(object.toJSON());
+      return res
+        .status(Status.HTTP_201_CREATED)
+        .json(object.toJSON());
     } catch (err) {
       return next(err);
     }
@@ -158,7 +160,7 @@ class BaseController {
       const object = await this.getObject(req);
       await object.remove();
   
-      return res.status(204).json();
+      return res.status(Status.HTTP_204_NO_CONTENT).json();
     } catch(err) {
       return next(err);
     }

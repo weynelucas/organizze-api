@@ -1,3 +1,5 @@
+const { Status } = require('../Utils/Http');
+
 const BaseController = require('./BaseController');
 const CategoryService = require('../Services/Category');
 
@@ -13,7 +15,9 @@ class CategoryController extends BaseController {
         req, this.model({ parent: category })
       );
       
-      return res.status(201).json(subcategory.toJSON());
+      return res
+        .status(Status.HTTP_201_CREATED)
+        .json(subcategory.toJSON());
     } catch (err) {
       next(err);
     }
@@ -26,7 +30,7 @@ class CategoryController extends BaseController {
 
       await CategoryService.destroyCategory(category, substitute);
 
-      return res.status(204).json();
+      return res.status(Status.HTTP_204_NO_CONTENT).json();
     } catch (err) {
       return next(err);
     }
@@ -51,7 +55,7 @@ class CategoryController extends BaseController {
     const filters = {};
 
     if (search) {
-      filters.description = new RegExp(`${search}`);
+      filters.description = new RegExp(`${search}`, 'i');
     }
 
     return documents.find(filters);
