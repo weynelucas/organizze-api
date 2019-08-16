@@ -9,13 +9,10 @@ function filterKeys(obj, only=[], except=[], filter) {
         !(only.length || except.length)
         || (only.length && only.includes(key))
         || (except.length && !except.includes(key))
-      ) 
+      ); 
     })
     .reduce((filtered, key) => {
-      return {
-        ...filtered,
-        [key]: obj[key]
-      }
+      return { ...filtered, [key]: obj[key] };
     }, {});
 }
 

@@ -2,6 +2,7 @@ const { model } = require('mongoose');
 const { checkSchema } = require('express-validator');
 
 const Tag = model('Tag');
+const Category = model('Category');
 const { isRelated, isDate } = require('./helpers');
 const validate = require('../Middlewares/Validate');
 
@@ -54,10 +55,22 @@ const schema = checkSchema({
         return { user: req.user._id };
       })
     }
+  },
+  category: {
+    in: ['body'],
+    optional: true,
+    isMongoId: {
+      errorMessage: 'This field must be a valid identifier.'
+    },
+    custom: {
+      options: isRelated(Category, '_id', (value, { req }) => { 
+        return { user: req.user._id };
+      })
+    }
   }
 });
 
 module.exports = {
   StoreTransaction: validate(schema),
   UpdateTransaction: validate(schema, true)
-}
+};

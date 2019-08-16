@@ -1,9 +1,10 @@
 const express = require('express');
 const autobind = require('auto-bind');
 const mongoose = require('mongoose');
+const urlJoin = require('proper-url-join');
 
 const { filterKeys } = require('../Utils/Object');
-const { NotFoundError } = require('../Utils/Http');
+const { Status, NotFoundError } = require('../Utils/Http');
 
 class BaseController {
 
@@ -131,7 +132,9 @@ class BaseController {
       var object = this.model();
   
       object = await this.performSave(req, object);
-      return res.status(201).json(object.toJSON());
+      return res
+        .status(Status.HTTP_201_CREATED)
+        .json(object.toJSON());
     } catch (err) {
       return next(err);
     }
@@ -157,7 +160,7 @@ class BaseController {
       const object = await this.getObject(req);
       await object.remove();
   
-      return res.status(204).json();
+      return res.status(Status.HTTP_204_NO_CONTENT).json();
     } catch(err) {
       return next(err);
     }
@@ -165,13 +168,31 @@ class BaseController {
 
   getActionSchema() {
     return {
-      list: { detail: false, method: 'get' },
-      create: { detail: false, method: 'post' },
-      retrieve: { detail: true, method: 'get' },
-      update: { detail: true, method: 'put' },
-      partialUpdate: { detail: true, method: 'patch' },
-      destroy: { detail: false, method: 'delete' },
-    }
+      list: {
+        detail: false,
+        method: 'get'
+      },
+      create: {
+        detail: false, 
+        method: 'post'
+      },
+      retrieve: { 
+        detail: true, 
+        method: 'get' 
+      },
+      update: { 
+        detail: true, 
+        method: 'put' 
+      },
+      partialUpdate: { 
+        detail: true, 
+        method: 'patch' 
+      },
+      destroy: { 
+        detail: true, 
+        method: 'delete' 
+      },
+    };
   }
   
   /**
@@ -197,16 +218,20 @@ class BaseController {
     }
 
     // Registering actions based on schema
-    Object.entries(schema).map(([action, { detail, method }]) => {
-      let path = !detail ? '/' : `/:${this.lookupFieldParam}`;
-      let stack = []
+    Object.entries(schema).map(([action, { detail, method, urlPath }]) => {
+      let path = urlJoin(...[
+        !detail && urlPath,
+        detail && `:${this.lookupFieldParam}`,
+        detail && urlPath
+      ]);
+      let stack = [];
 
       if (middleware instanceof Map && middleware.has(action)) {
-        stack.push(middleware.get(action))
+        stack.push(middleware.get(action));
       }
 
       if (validator instanceof Map && validator.has(action)) {
-        stack.push(validator.get(action))
+        stack.push(validator.get(action));
       }
 
       stack.push(this[action]);

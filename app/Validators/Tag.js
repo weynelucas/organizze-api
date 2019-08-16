@@ -29,4 +29,4 @@ const schema = checkSchema({
 module.exports = {
   StoreTag: validate(schema),
   UpdateTag: validate(schema, true)
-}
+};

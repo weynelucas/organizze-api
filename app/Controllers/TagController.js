@@ -22,7 +22,7 @@ class TagController extends BaseController {
     const filters = {};
 
     if (search) {
-      filters.description = new RegExp(`${search}`);
+      filters.description = new RegExp(`${search}`, 'i');
     }
 
     return documents.find(filters).select('-user');

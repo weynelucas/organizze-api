@@ -14,7 +14,9 @@ class TransactionController extends BaseController {
   }
 
   getDocuments({ user: { id: userId } }) {
-    return this.model.find({ user: userId });
+    return this.model
+      .find({ user: userId })
+      .populate('category');
   }
 
   filterDocuments(req, documents) {

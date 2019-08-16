@@ -5,12 +5,14 @@ const AuthMiddleware = require('./Middlewares/Auth');
 // Controllers
 const UserController = require('./Controllers/UserController');
 const TagController = require('./Controllers/TagController');
+const CategoryController = require('./Controllers/CategoryController');
 const TransactionController = require('./Controllers/TransactionController');
 
 // Validators
 const { StoreUser, StoreLogin } = require('./Validators/User');
 const { StoreTransaction, UpdateTransaction } = require('./Validators/Transaction');
 const { StoreTag, UpdateTag } = require('./Validators/Tag');
+const { StoreCategory, UpdateCategory, DestroyCategory } = require('./Validators/Category');
 
 // Exception Handlers
 const HttpExceptionHandler = require('./Exceptions/Http');
@@ -31,6 +33,17 @@ router.use('/transactions', new TransactionController().Router({
     ['create', StoreTransaction],
     ['update', StoreTransaction],
     ['partialUpdate', UpdateTransaction],
+  ])
+}));
+
+// Category
+router.use('/categories', new CategoryController().Router({
+  middleware: loginRequired,
+  validator: new Map([
+    ['create', StoreCategory],
+    ['update', StoreCategory],
+    ['partialUpdate', UpdateCategory],
+    ['destroy', DestroyCategory],
   ])
 }));
 

@@ -34,6 +34,10 @@ const TransactionSchema = new Schema({
     default: true
   },
   observation: String,
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+  },
   tags: [{ 
     type: Schema.Types.ObjectId, 
     ref: 'Tag' 
@@ -51,6 +55,7 @@ TransactionSchema.methods.toJSON = function () {
     ammount: this.ammount,
     done: this.done,
     observation: this.observation,
+    category: this.category,
     tags: this.tags,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,

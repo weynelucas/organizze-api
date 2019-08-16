@@ -1,8 +1,12 @@
 const Status = {
+  HTTP_200_OK: 200,
+  HTTP_201_CREATED: 201,
+  HTTP_204_NO_CONTENT: 204,
   HTTP_400_BAD_REQUEST: 400,
   HTTP_401_UNAUTHORIZED: 401,
   HTTP_403_FORBIDDEN: 403,
   HTTP_404_NOT_FOUND: 404,
+  HTTP_409_CONFLICT: 409,
   HTTP_500_INTERNAL_SERVER_ERROR: 500,
 };
 
@@ -64,6 +68,15 @@ class PermissionDeniedError extends APIError {
   }
 }
 
+class ConflictError extends APIError {
+  constructor(
+    code='conflict',
+    message='The request conflicts with the current state of the target resource.',
+  ) {
+    super(message, Status.HTTP_409_CONFLICT, code);
+  }
+}
+
 
 module.exports = { 
   Status,
@@ -71,5 +84,6 @@ module.exports = {
   NotFoundError, 
   AuthenticationFailedError, 
   NotAuthenticatedError,
-  PermissionDeniedError 
+  PermissionDeniedError ,
+  ConflictError
 };
