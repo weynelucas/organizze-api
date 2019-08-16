@@ -109,15 +109,27 @@ class BaseController {
     }
   }
 
+  /**
+   * List a queryset
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async list(req, res, next) {
     const results = await this.filterDocuments(req, this.getDocuments(req));
-
+    
     return res.json({
       count: results.length,
       results
     });
   }
 
+  /**
+   * Retrieve a model instance
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async retrieve(req, res, next) {
     try {
       const object = await this.getObject(req);
@@ -127,6 +139,12 @@ class BaseController {
     }
   }
 
+  /**
+   * Create a model instance
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async create(req, res, next) {
     try {
       var object = this.model();
@@ -140,6 +158,12 @@ class BaseController {
     }
   }
 
+  /**
+   * Update a model instance
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async update(req, res, next) {
     try {
       var object = await this.getObject(req);
@@ -151,10 +175,22 @@ class BaseController {
     }
   }
 
+  /**
+   * Update (partially) a model instance
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async partialUpdate(req, res, next) {
     return await this.update(req, res, next);
   }
 
+  /**
+   * Destroy a model instance
+   * @param {express.Request} req The request object
+   * @param {express.Response} res The response object
+   * @param {express.NextFunction} next The next middleware on stack
+   */
   async destroy(req, res, next) {
     try {
       const object = await this.getObject(req);
